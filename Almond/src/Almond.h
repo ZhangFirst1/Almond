@@ -1,8 +1,8 @@
-#pragma once
+Ôªø#pragma once
 
-#include <cstdio>
 #include "Almond/Application.h"
+#include "Almond/Log.h"
 
-//----------------»Îø⁄µ„-----------------
+//----------------ÂÖ•Âè£ÁÇπ-----------------
 #include "Almond/EntryPoint.h"
 //---------------------------------------

@@ -1,3 +1,4 @@
+﻿#include <ampch.h>
 #include <Almond.h>
 
 class Sandbox : public Almond::Application {
