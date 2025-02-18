@@ -16,18 +16,36 @@ namespace Almond {
 
 	}
 
+	void Application::PushLayer(Layer* layer) {
+		m_LayerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* layer) {
+		m_LayerStack.PushOverlay(layer);
+	}
+
 	void Application::OnEvent(Event& e) {
-		EventDispatcher dispatcher(e);											// 创建事件分发器
+		EventDispatcher dispatcher(e);				// 创建事件分发器
 		// 如果传进的事件类e是WindowCloseEvent类，使用分发器内部的回调函数调用OnWindowClose
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));	
 
-		AM_CORE_TRACE("{0}", e);		// 会调用e的ToString
+		// 事件处理，从栈顶（vector尾）到栈底（vector头）
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
+			(*--it)->OnEvent(e);
+			if (e.Handled)
+				break;
+		}
+
 	}
 
 	void Application::Run() {
 		while (m_Running) {
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (Layer* layer : m_LayerStack)		// 遍历图层栈
+				layer->OnUpdate();
+
 			m_Window->OnUpdate();
 		}
 	}

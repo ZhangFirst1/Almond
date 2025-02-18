@@ -4,6 +4,7 @@
 #include "Events/Event.h"
 #include "Window.h"
 #include "Events/ApplicationEvent.h"
+#include "LayerStack.h"
 
 /*
 	我们希望降低模块间耦合度，在Application类的实现中不应有Event，同样Window类也不应有Event和Application。
@@ -20,14 +21,19 @@ namespace Almond {
 
 		void Run();
 
-		void OnEvent(Event& e);
+		void OnEvent(Event& e);							// 处理事件
+
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* layer);
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
-		std::unique_ptr<Window> m_Window;
-		bool m_Running = true;
+		std::unique_ptr<Window> m_Window;				// 窗口指针
+		bool m_Running = true;							// 运行状态
+		LayerStack m_LayerStack;						// 图层栈帧
 	};
 
+	// To be defined in CLIENT
 	Application* CreateApplication();
 
 }

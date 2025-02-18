@@ -61,14 +61,17 @@ project "Almond"
 
 	filter "configurations:Debug"
 		defines "AM_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "AM_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "AM_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 project "Sandbox"
@@ -108,12 +111,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "AM_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "AM_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "AM_DIST"
+		buildoptions "/MD"
 		optimize "On"
