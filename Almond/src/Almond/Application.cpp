@@ -1,6 +1,7 @@
 ﻿#include "ampch.h"
 #include "Application.h"
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace Almond {
@@ -10,6 +11,9 @@ namespace Almond {
 	Application::Application() {
 		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口，此处m_Window是Application类中的，与WindowsWindow类中不同
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+		unsigned int id;
+		glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application() {

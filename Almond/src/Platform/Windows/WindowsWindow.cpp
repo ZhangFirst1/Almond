@@ -43,7 +43,9 @@ namespace Almond {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
-		glfwSetWindowUserPointer(m_Window, &m_Data);		// 将自定义数据与窗口关联，方便取用
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);// 初始化glad
+		AM_CORE_ASSERT(status, "Failed to initialize GLAD!");
+		glfwSetWindowUserPointer(m_Window, &m_Data);					// 将自定义数据与窗口关联，方便取用
 		SetVSync(true);
 
 		// 设置GLFW回调函数
