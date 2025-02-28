@@ -5,6 +5,7 @@
 #include "Window.h"
 #include "Events/ApplicationEvent.h"
 #include "LayerStack.h"
+#include "Almond/ImGui/ImGuiLayer.h"
 
 /*
 	我们希望降低模块间耦合度，在Application类的实现中不应有Event，同样Window类也不应有Event和Application。
@@ -32,6 +33,7 @@ namespace Almond {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;				// 窗口指针
+		ImGuiLayer* m_ImGuiLayer;						// ImGui指针
 		bool m_Running = true;							// 运行状态
 		LayerStack m_LayerStack;						// 图层栈帧
 

@@ -41,7 +41,7 @@ namespace Almond {
 
 	private:
 		std::vector<Layer*> m_Layers;
-		std::vector<Layer*>::iterator m_LayerInsert;	// 迭代器，用于指向下一个图层插入的位置
+		unsigned int m_LayerInsertIndex = 0;		// 迭代器，用于指向下一个图层插入的位置
 	};
 
 }

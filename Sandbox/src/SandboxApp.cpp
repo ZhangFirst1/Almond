@@ -1,6 +1,7 @@
 ﻿#include <ampch.h>
 #include <Almond.h>
 
+#include "imgui/imgui.h"
 
 class ExampleLayer : public Almond::Layer {
 public:
@@ -12,6 +13,12 @@ public:
 	void OnUpdate() override {
 		if (Almond::Input::IsKeypressed(AM_KEY_TAB))
 			AM_TRACE("Tab is pressed!(poll)");
+	}
+
+	virtual void OnImGuiRender() override {
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World!");
+		ImGui::End();
 	}
 
 	void OnEvent(Almond::Event& event) override{
@@ -30,7 +37,7 @@ class Sandbox : public Almond::Application {
 public:
 	Sandbox() {
 		PushLayer(new ExampleLayer());
-		PushLayer(new Almond::ImGuiLayer());
+
 	}
 
 	~Sandbox() {

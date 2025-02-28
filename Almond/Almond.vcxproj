@@ -171,8 +171,6 @@
     <ClInclude Include="src\Almond\Log.h" />
     <ClInclude Include="src\Almond\MouseButtonCodes.h" />
     <ClInclude Include="src\Almond\Window.h" />
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
-    <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\ampch.h" />
@@ -597,11 +595,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Almond\Application.cpp" />
+    <ClCompile Include="src\Almond\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Almond\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Almond\Layer.cpp" />
     <ClCompile Include="src\Almond\LayerStack.cpp" />
     <ClCompile Include="src\Almond\Log.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\ampch.cpp">

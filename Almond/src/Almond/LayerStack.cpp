@@ -4,7 +4,7 @@
 namespace Almond {
 
 	LayerStack::LayerStack() {
-		m_LayerInsert = m_Layers.begin();	// 迭代器初始化为m_Layers的初始位置
+
 	}
 
 	LayerStack::~LayerStack() {
@@ -14,7 +14,8 @@ namespace Almond {
 
 	void LayerStack::PushLayer(Layer* layer) {
 		// emplace 在m_LayerInsert前插入（直接在vector中构造），并返回指向该元素的迭代器
-		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
+		m_LayerInsertIndex++;
 	}
 
 	void LayerStack::PushOverlay(Layer* layer) {
@@ -24,8 +25,8 @@ namespace Almond {
 	void LayerStack::PopLayer(Layer* layer) {
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 		if (it != m_Layers.end()) {
-			m_Layers.erase(it);				// 只将图层删除，并未释放内存
-			m_LayerInsert--;				// 此处有些疑惑，每次只删除栈顶?
+			m_Layers.erase(it);					// 只将图层删除，并未释放内存
+			m_LayerInsertIndex--;				// 此处有些疑惑，每次只删除栈顶?
 		}
 	}
 

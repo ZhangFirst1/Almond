@@ -108,6 +108,7 @@ project "Sandbox"
 	includedirs {
 		"$(SolutionDir)/Almond/vendor/spdlog/include",
 		"$(SolutionDir)Almond/src",
+		"$(SolutionDir)Almond/vendor",
 		"%{IncludeDir.glm}"
 	}
 

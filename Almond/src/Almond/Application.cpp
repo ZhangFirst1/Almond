@@ -18,8 +18,11 @@ namespace Almond {
 		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口，此处m_Window是Application类中的，与WindowsWindow类中不同
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
-		unsigned int id;
-		glGenVertexArrays(1, &id);
+		m_ImGuiLayer = new ImGuiLayer();							// 初始化ImGuiLayer
+		PushOverlay(m_ImGuiLayer);
+
+		//unsigned int id;
+		//glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application() {
@@ -57,6 +60,11 @@ namespace Almond {
 
 			for (Layer* layer : m_LayerStack)		// 遍历图层栈
 				layer->OnUpdate();
+
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack)		// ImGui栈
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}
