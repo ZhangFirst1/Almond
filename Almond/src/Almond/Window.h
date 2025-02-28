@@ -36,6 +36,9 @@ namespace Almond {
 		virtual void SetVSync(bool enable = 0) = 0;							// Vertical Sync（垂直同步）
 		virtual bool IsSyne() const = 0;
 
+		// 返回窗口（void*因为未必是GLFWwindow）
+		virtual void* GetNativeWindow() const = 0;
+
 		static Window* Create(const WindowProps& props = WindowProps());	// 创建窗口
 	};
 

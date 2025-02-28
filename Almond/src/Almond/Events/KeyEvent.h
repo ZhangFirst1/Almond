@@ -51,6 +51,22 @@ namespace Almond {
 			ss << "KeyReleasedEvent: " << m_KeyCode << std::endl;
 			return ss.str();
 		}
+
+	};
+
+	// 输入文字-------------------------------------------------------------------------
+	class ALMOND_API KeyTypedEvent : public KeyEvent {
+	public:
+		KeyTypedEvent(int keyCode)
+			:KeyEvent(keyCode) {}
+
+		EVENT_CLASS_TYPE(KeyTyped)
+		
+		std::string ToString() const override {
+			std::stringstream ss;
+			ss << "KeyTypedEvent: " << m_KeyCode << std::endl;
+			return ss.str();
+		}
 	};
 
 }

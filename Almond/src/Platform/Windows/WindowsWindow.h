@@ -18,8 +18,10 @@ namespace Almond{
 
 		// 设置窗口属性
 		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-		virtual void SetVSync(bool enable = 0);							
-		virtual bool IsSyne() const;
+		virtual void SetVSync(bool enable = 0) override;							
+		virtual bool IsSyne() const override;
+
+		inline virtual void* GetNativeWindow() const override { return m_Window; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();

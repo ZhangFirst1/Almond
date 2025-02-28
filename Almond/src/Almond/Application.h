@@ -25,12 +25,17 @@ namespace Almond {
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
+
+		inline Window& GetWindow(){ return *m_Window; }
+		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;				// 窗口指针
 		bool m_Running = true;							// 运行状态
 		LayerStack m_LayerStack;						// 图层栈帧
+
+		static Application* s_Instance;					// Application类单例
 	};
 
 	// To be defined in CLIENT

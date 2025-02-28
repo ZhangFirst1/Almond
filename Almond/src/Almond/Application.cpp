@@ -1,5 +1,6 @@
 ﻿#include "ampch.h"
 #include "Application.h"
+#include "Input.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -8,7 +9,12 @@ namespace Almond {
 	// 成员函数指针需要附加一个对象实例来调用，使用bind将成员函数和对象实例绑定
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application() {
+		AM_CORE_ASSERT(!s_Instance, "Application has existed!");
+		s_Instance = this;
+
 		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口，此处m_Window是Application类中的，与WindowsWindow类中不同
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
@@ -22,10 +28,12 @@ namespace Almond {
 
 	void Application::PushLayer(Layer* layer) {
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer) {
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e) {

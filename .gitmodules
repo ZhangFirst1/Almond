@@ -4,3 +4,9 @@
 [submodule "Almond/vendor/GLFW"]
 	path = Almond/vendor/GLFW
 	url = https://github.com/TheCherno/glfw.git
+[submodule "Almond/vendor/imgui"]
+	path = Almond/vendor/imgui
+	url = https://github.com/TheCherno/imgui.git
+[submodule "Almond/vendor/glm"]
+	path = Almond/vendor/glm
+	url = https://github.com/g-truc/glm.git
