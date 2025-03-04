@@ -6,6 +6,7 @@
 #include "Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Almond/ImGui/ImGuiLayer.h"
+#include "Renderer/Shader.h"
 
 /*
 	我们希望降低模块间耦合度，在Application类的实现中不应有Event，同样Window类也不应有Event和Application。
@@ -36,6 +37,9 @@ namespace Almond {
 		ImGuiLayer* m_ImGuiLayer;						// ImGui指针
 		bool m_Running = true;							// 运行状态
 		LayerStack m_LayerStack;						// 图层栈帧
+
+		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;	// VAO VBO EBO
+		std::unique_ptr<Shader> m_Shader;				// Shader类指针
 
 		static Application* s_Instance;					// Application类单例
 	};

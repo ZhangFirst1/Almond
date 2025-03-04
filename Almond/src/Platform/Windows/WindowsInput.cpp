@@ -25,7 +25,7 @@ namespace Almond {
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 
-		return std::make_pair<float, float>(xpos, ypos);
+		return std::make_pair<float, float>((float)xpos, (float)ypos);
 	}
 
 	float WindowsInput::GetMouseXImpl() {

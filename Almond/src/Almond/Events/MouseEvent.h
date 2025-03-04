@@ -7,7 +7,7 @@ namespace Almond {
 	// 鼠标移动---------------------------------------------------
 	class ALMOND_API MouseMovedEvent : public Event {
 	public:
-		MouseMovedEvent(int mouseX, int mouseY)
+		MouseMovedEvent(float mouseX, float mouseY)
 			:m_MouseX(mouseX), m_MouseY(mouseY) {}
 
 		inline float GetX() const { return m_MouseX;  }
@@ -28,7 +28,7 @@ namespace Almond {
 	// 鼠标滚动---------------------------------------------------
 	class ALMOND_API MouseScrolledEvent : public Event {
 	public:
-		MouseScrolledEvent(int mouseX, int mouseY)
+		MouseScrolledEvent(float mouseX, float mouseY)
 			:m_XOffset(mouseX), m_YOffset(mouseY) {}
 
 		inline float GetXOffset() const { return m_YOffset; }

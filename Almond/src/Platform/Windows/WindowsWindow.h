@@ -2,6 +2,8 @@
 
 #include "Almond/Window.h"
 #include "glad/glad.h"
+#include "Platform/OpenGL/OpenGLContext.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Almond{
@@ -28,6 +30,7 @@ namespace Almond{
 
 	private:
 		GLFWwindow* m_Window;			// GLFW窗口对象
+		OpenGLContext* m_Context;		// 自定义OpenGL上下文
 
 		struct WindowData {
 			std::string Title;
