@@ -20,31 +20,84 @@ namespace Almond {
 
 		m_ImGuiLayer = new ImGuiLayer();							// 初始化ImGuiLayer
 		PushOverlay(m_ImGuiLayer);
+		
+		m_VertexArray.reset(VertexArray::Create());					// 创建VAO
 
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
-		glGenBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f
+		float vertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+			0.5f, -0.5f, 0.0f,  0.2f, 0.3f, 0.4f, 1.0f,
+			0.0f,  0.5f, 0.0f,	0.8f, 0.3f, 0.4f, 1.0f
 		};
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));	 // 创建vertex buffer
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		// 设置顶点属性
+		BufferLayout layout = {
+			{ ShaderDataType::Float3, "a_Position"},
+			{ ShaderDataType::Float4, "a_Color"}
+		};
+		vertexBuffer->SetLayout(layout);
+		m_VertexArray->AddVertexBuffer(vertexBuffer);				// VAO绑定vertex buffer
 
-		glGenBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		uint32_t indices[3] = { 0, 1, 2 };
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_VertexArray->SetIndexBuffer(indexBuffer);				// VAO绑定index buffer
 
-		unsigned int indices[3] = { 0, 1, 2 };
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		m_SquareVA.reset(VertexArray::Create());
+
+		float squareVertices[3 * 4] = {
+			-0.5f, -0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f, 
+			0.5f,  0.5f, 0.0f,	
+			-0.5f, 0.5f, 0.0f
+		};
+		std::shared_ptr<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));	 // 创建vertex buffer
+
+		BufferLayout squareLayout = {
+			{ ShaderDataType::Float3, "a_Position"}
+		};
+		squareVB->SetLayout(squareLayout);
+		m_SquareVA->AddVertexBuffer(squareVB);
+
+		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		std::shared_ptr<IndexBuffer> squareIndexBuffer;
+		squareIndexBuffer.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		m_SquareVA->SetIndexBuffer(squareIndexBuffer);				// VAO绑定index buffer
 
 		std::string vertexSrc = R"(
+			#version 330 core			
+			
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec4 a_Color;
+
+			out vec3 v_Position;
+			out vec4 v_Color;
+			
+			void main(){
+				v_Position = a_Position;
+				v_Color = a_Color;
+				gl_Position = vec4(a_Position, 1.0f);
+			}
+		)";
+
+		std::string fragmentSrc = R"(
+			#version 330 core			
+			
+			layout(location = 0) out vec4 color;
+
+			in vec3 v_Position;
+			in vec4 v_Color;
+			
+			void main(){
+				color = vec4(v_Position * 0.5 + 0.5, 1.0f);
+				color = v_Color;
+			}
+		)";
+
+		std::string blueVertexSrc = R"(
 			#version 330 core			
 			
 			layout(location = 0) in vec3 a_Position;
@@ -57,19 +110,21 @@ namespace Almond {
 			}
 		)";
 
-		std::string fragmentSrc = R"(
+		std::string blueFragmentSrc = R"(
 			#version 330 core			
 			
 			layout(location = 0) out vec4 color;
 
 			in vec3 v_Position;
+			in vec4 v_Color;
 			
 			void main(){
-				color = vec4(v_Position * 0.5 + 0.5, 1.0f);
+				color = vec4(0.2f, 0.3f, 0.8f, 1.0f);
 			}
 		)";
 
 		m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
+		m_BuleShader.reset(new Shader(blueVertexSrc, blueFragmentSrc));
 	}
 
 	Application::~Application() {
@@ -105,9 +160,13 @@ namespace Almond {
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			m_BuleShader->Bind();
+			m_SquareVA->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
 			m_Shader->Bind();
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			m_VertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)		// 遍历图层栈
 				layer->OnUpdate();

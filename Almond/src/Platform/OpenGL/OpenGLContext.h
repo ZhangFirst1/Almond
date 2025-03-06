@@ -5,7 +5,7 @@
 class GLFWwindow;
 
 namespace Almond {
-
+	// OpenGL上下文
 	class OpenGLContext : public GraphicsContext {
 	public:
 		OpenGLContext(GLFWwindow* windowHandle);
@@ -14,7 +14,6 @@ namespace Almond {
 		virtual void SwapBuffers() override;
 	private:
 		GLFWwindow* m_WindowHandle;
-
 	};
 
 }

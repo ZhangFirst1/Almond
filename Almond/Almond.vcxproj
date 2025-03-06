@@ -161,9 +161,14 @@
     <ClInclude Include="src\Almond\LayerStack.h" />
     <ClInclude Include="src\Almond\Log.h" />
     <ClInclude Include="src\Almond\MouseButtonCodes.h" />
+    <ClInclude Include="src\Almond\Renderer\Buffer.h" />
     <ClInclude Include="src\Almond\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Almond\Renderer\Renderer.h" />
     <ClInclude Include="src\Almond\Renderer\Shader.h" />
+    <ClInclude Include="src\Almond\Renderer\VertexArray.h" />
     <ClInclude Include="src\Almond\Window.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLArrayVertex.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -594,7 +599,12 @@
     <ClCompile Include="src\Almond\Layer.cpp" />
     <ClCompile Include="src\Almond\LayerStack.cpp" />
     <ClCompile Include="src\Almond\Log.cpp" />
+    <ClCompile Include="src\Almond\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Almond\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Almond\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Almond\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLArrayVertex.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
