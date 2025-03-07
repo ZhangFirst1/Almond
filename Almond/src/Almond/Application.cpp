@@ -1,9 +1,8 @@
 ﻿#include "ampch.h"
 #include "Application.h"
 #include "Input.h"
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Renderer/Renderer.h"
+#include "Renderer/RendererCommand.h"
 
 namespace Almond {
 	// 成员函数指针需要附加一个对象实例来调用，使用bind将成员函数和对象实例绑定
@@ -157,16 +156,18 @@ namespace Almond {
 
 	void Application::Run() {
 		while (m_Running) {
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+			RendererCommand::Clear();
+			
+			Renderer::BeginScene();		// 暂时为空
 
 			m_BuleShader->Bind();
-			m_SquareVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_SquareVA);
 
 			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_VertexArray);
+
+			Renderer::EndScene();		// 暂时未空
 
 			for (Layer* layer : m_LayerStack)		// 遍历图层栈
 				layer->OnUpdate();

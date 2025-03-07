@@ -1361,6 +1361,9 @@
     <ClInclude Include="src\Almond\Renderer\Renderer.h" />
     <ClInclude Include="src\Almond\Renderer\VertexArray.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLArrayVertex.h" />
+    <ClInclude Include="src\Almond\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\Almond\Renderer\RendererCommand.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Almond\Application.cpp">
@@ -1397,5 +1400,8 @@
     <ClCompile Include="src\Almond\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Almond\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLArrayVertex.cpp" />
+    <ClCompile Include="src\Almond\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\Almond\Renderer\RendererCommand.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
   </ItemGroup>
 </Project>

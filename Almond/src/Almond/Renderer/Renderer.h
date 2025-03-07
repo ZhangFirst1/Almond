@@ -1,18 +1,17 @@
 #pragma once
 
-namespace Almond {
+#include "RendererAPI.h"
 
-	// 表示当前使用的是何种Renderer API
-	enum class RendererAPI {
-		None = 0, OpenGL = 1
-	};
+namespace Almond {
 
 	class Renderer {
 	public:
-		inline static RendererAPI GetAPI() { return s_RendererAPI; }
-	private:
-		static RendererAPI s_RendererAPI;
-	};
+		static void BeginScene();
+		static void EndScene();
+		// 提交vertexArray并绑定，由RendererCommand::DrawIndexed具体实现DrawElement
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
 
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }	// 获取RendererAPI
+	};
 
 }

@@ -10,8 +10,8 @@ namespace Almond {
 	VertexBuffer* VertexBuffer::Create(float* vertices, unsigned int size) {
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::None: AM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::OpenGL: return new OpenGLVertexBuffer(vertices, size);
+		case RendererAPI::API::None: AM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL: return new OpenGLVertexBuffer(vertices, size);
 		}
 
 		AM_CORE_ASSERT(false, "RendererAPI is still unkonw!");
@@ -22,8 +22,8 @@ namespace Almond {
 	IndexBuffer* IndexBuffer::Create(unsigned int* indices, unsigned int size) {
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::None: AM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::OpenGL: return new OpenGLIndexBuffer(indices, size);
+		case RendererAPI::API::None: AM_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+		case RendererAPI::API::OpenGL: return new OpenGLIndexBuffer(indices, size);
 		}
 
 		AM_CORE_ASSERT(false, "RendererAPI is still unkonw!");
