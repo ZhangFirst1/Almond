@@ -163,6 +163,7 @@
     <ClInclude Include="src\Almond\MouseButtonCodes.h" />
     <ClInclude Include="src\Almond\Renderer\Buffer.h" />
     <ClInclude Include="src\Almond\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Almond\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Almond\Renderer\Renderer.h" />
     <ClInclude Include="src\Almond\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Almond\Renderer\RendererCommand.h" />
@@ -603,6 +604,7 @@
     <ClCompile Include="src\Almond\LayerStack.cpp" />
     <ClCompile Include="src\Almond\Log.cpp" />
     <ClCompile Include="src\Almond\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Almond\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Almond\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Almond\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Almond\Renderer\RendererCommand.cpp" />

@@ -9,6 +9,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
+#include "Renderer/OrthographicCamera.h"
 
 /*
 	我们希望降低模块间耦合度，在Application类的实现中不应有Event，同样Window类也不应有Event和Application。
@@ -46,6 +47,7 @@ namespace Almond {
 		std::shared_ptr<Shader> m_BuleShader;			// Shader类指针
 		std::shared_ptr<VertexArray> m_SquareVA;		// VAO指针
 
+		OrthographicCamera m_Camera;					// 摄像机
 		static Application* s_Instance;					// Application类单例
 	};
 

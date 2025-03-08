@@ -1,8 +1,8 @@
 ﻿#include "ampch.h"
 #include "Application.h"
 #include "Input.h"
-#include "Renderer/Renderer.h"
-#include "Renderer/RendererCommand.h"
+#include "Almond/Renderer/Renderer.h"
+
 
 namespace Almond {
 	// 成员函数指针需要附加一个对象实例来调用，使用bind将成员函数和对象实例绑定
@@ -10,7 +10,8 @@ namespace Almond {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application() {
+	Application::Application() 
+		:m_Camera(-1.6f, 1.6f, -0.9f, 0.9f){
 		AM_CORE_ASSERT(!s_Instance, "Application has existed!");
 		s_Instance = this;
 
@@ -66,11 +67,14 @@ namespace Almond {
 		squareIndexBuffer.reset(IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIndexBuffer);				// VAO绑定index buffer
 
+		// Shader
 		std::string vertexSrc = R"(
 			#version 330 core			
 			
 			layout(location = 0) in vec3 a_Position;
 			layout(location = 1) in vec4 a_Color;
+
+			uniform mat4 u_ViewProjection;
 
 			out vec3 v_Position;
 			out vec4 v_Color;
@@ -78,7 +82,7 @@ namespace Almond {
 			void main(){
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = vec4(a_Position, 1.0f);
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0f);
 			}
 		)";
 
@@ -101,11 +105,13 @@ namespace Almond {
 			
 			layout(location = 0) in vec3 a_Position;
 
+			uniform mat4 u_ViewProjection;
+
 			out vec3 v_Position;
 			
 			void main(){
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0f);
+				gl_Position = u_ViewProjection * vec4(a_Position, 1.0f);
 			}
 		)";
 
@@ -159,21 +165,20 @@ namespace Almond {
 			RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 			RendererCommand::Clear();
 			
-			Renderer::BeginScene();		// 暂时为空
+			m_Camera.SetRotation(45.0f);
 
-			m_BuleShader->Bind();
-			Renderer::Submit(m_SquareVA);
+			Renderer::BeginScene(m_Camera);					// 负责每帧渲染前的环境设置
 
-			m_Shader->Bind();
-			Renderer::Submit(m_VertexArray);
+			Renderer::Submit(m_BuleShader, m_SquareVA);		// 收集场景数据
+			Renderer::Submit(m_Shader, m_VertexArray);
 
-			Renderer::EndScene();		// 暂时未空
+			Renderer::EndScene();							// 暂时为空
 
-			for (Layer* layer : m_LayerStack)		// 遍历图层栈
+			for (Layer* layer : m_LayerStack)				// 遍历图层栈
 				layer->OnUpdate();
 
 			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)		// ImGui栈
+			for (Layer* layer : m_LayerStack)				// ImGui栈
 				layer->OnImGuiRender();
 			m_ImGuiLayer->End();
 
