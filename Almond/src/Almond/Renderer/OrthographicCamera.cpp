@@ -21,7 +21,6 @@ namespace Almond {
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-
 }
 
 

@@ -149,6 +149,7 @@
     <ClInclude Include="src\Almond.h" />
     <ClInclude Include="src\Almond\Application.h" />
     <ClInclude Include="src\Almond\Core.h" />
+    <ClInclude Include="src\Almond\Core\Timestep.h" />
     <ClInclude Include="src\Almond\EntryPoint.h" />
     <ClInclude Include="src\Almond\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Almond\Events\Event.h" />

@@ -2,6 +2,7 @@
 
 #include "Almond/Core.h"
 #include "Almond/Events/Event.h"
+#include "Almond/Core/Timestep.h"
 
 namespace Almond{
 	class ALMOND_API Layer {
@@ -11,7 +12,7 @@ namespace Almond{
 
 		virtual void OnAttach() {};
 		virtual void OnDetach() {};
-		virtual void OnUpdate() {};
+		virtual void OnUpdate(Timestep ts) {};
 		virtual void OnImGuiRender() {};
 		virtual void OnEvent(Event& event) {};
 

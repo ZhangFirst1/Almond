@@ -1365,6 +1365,7 @@
     <ClInclude Include="src\Almond\Renderer\RendererCommand.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Almond\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="src\Almond\Core\Timestep.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Almond\Application.cpp">
