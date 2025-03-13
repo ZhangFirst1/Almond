@@ -19,6 +19,8 @@ namespace Almond {
 		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口，此处m_Window是Application类中的，与WindowsWindow类中不同
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
+		Renderer::Init();
+
 		m_ImGuiLayer = new ImGuiLayer();							// 初始化ImGuiLayer
 		PushOverlay(m_ImGuiLayer);
 		

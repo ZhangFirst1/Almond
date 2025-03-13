@@ -44,7 +44,7 @@ namespace Almond {
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexbuffer)
+	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexbuffer)
 	{
 		AM_CORE_ASSERT(vertexbuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
 
@@ -67,7 +67,7 @@ namespace Almond {
 		m_VertexBuffers.push_back(vertexbuffer);	// 加入vertexbuffer指针列表
 	}
 
-	void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexbuffer)
+	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexbuffer)
 	{
 		glBindVertexArray(m_RendererID);
 		indexbuffer->Bind();

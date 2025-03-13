@@ -7,14 +7,23 @@
     <Filter Include="src\Almond">
       <UniqueIdentifier>{5731BD04-43E9-FE51-ACF0-D7AD98C79942}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Almond\Core">
+      <UniqueIdentifier>{0FC40D9E-7B4F-7B62-8460-FE56F06AD762}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Almond\Events">
       <UniqueIdentifier>{5B15B15D-C72B-AFF3-10A3-3A157CF87F7B}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Almond\ImGui">
       <UniqueIdentifier>{C10B3160-AD04-50B2-D636-3537C28E2FBE}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Almond\Renderer">
+      <UniqueIdentifier>{DDE64685-4948-2493-D2B5-6A453E165B52}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OpenGL">
+      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
@@ -40,6 +49,9 @@
     <Filter Include="vendor\glm\glm\gtx">
       <UniqueIdentifier>{B3A6A76B-9F8A-68C1-08EB-6214F4ED5243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\stb_image">
+      <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Almond.h">
@@ -50,6 +62,9 @@
     </ClInclude>
     <ClInclude Include="src\Almond\Core.h">
       <Filter>src\Almond</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\Timestep.h">
+      <Filter>src\Almond\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Almond\EntryPoint.h">
       <Filter>src\Almond</Filter>
@@ -87,8 +102,53 @@
     <ClInclude Include="src\Almond\MouseButtonCodes.h">
       <Filter>src\Almond</Filter>
     </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\Buffer.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\GraphicsContext.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\OrthographicCamera.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\Renderer.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\RendererAPI.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\RendererCommand.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\Shader.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\Texture.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\VertexArray.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Almond\Window.h">
       <Filter>src\Almond</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLArrayVertex.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1353,19 +1413,9 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Almond\Renderer\GraphicsContext.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
-    <ClInclude Include="src\Almond\Renderer\Shader.h" />
-    <ClInclude Include="src\Almond\Renderer\Buffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
-    <ClInclude Include="src\Almond\Renderer\Renderer.h" />
-    <ClInclude Include="src\Almond\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLArrayVertex.h" />
-    <ClInclude Include="src\Almond\Renderer\RendererAPI.h" />
-    <ClInclude Include="src\Almond\Renderer\RendererCommand.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
-    <ClInclude Include="src\Almond\Renderer\OrthographicCamera.h" />
-    <ClInclude Include="src\Almond\Core\Timestep.h" />
+    <ClInclude Include="vendor\stb_image\stb_image.h">
+      <Filter>vendor\stb_image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Almond\Application.cpp">
@@ -1386,6 +1436,48 @@
     <ClCompile Include="src\Almond\Log.cpp">
       <Filter>src\Almond</Filter>
     </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\Buffer.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\Renderer.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\RendererAPI.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\RendererCommand.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\Shader.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\Texture.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\VertexArray.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLArrayVertex.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1395,16 +1487,8 @@
     <ClCompile Include="src\ampch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Almond\Renderer\Shader.cpp" />
-    <ClCompile Include="src\Almond\Renderer\Buffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
-    <ClCompile Include="src\Almond\Renderer\Renderer.cpp" />
-    <ClCompile Include="src\Almond\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLArrayVertex.cpp" />
-    <ClCompile Include="src\Almond\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="src\Almond\Renderer\RendererCommand.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
-    <ClCompile Include="src\Almond\Renderer\OrthographicCamera.cpp" />
+    <ClCompile Include="vendor\stb_image\stb_image.cpp">
+      <Filter>vendor\stb_image</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

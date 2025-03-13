@@ -15,6 +15,7 @@ IncludeDir["GLFW"] = "Almond/vendor/GLFW/include"
 IncludeDir["Glad"] = "Almond/vendor/Glad/include"
 IncludeDir["ImGui"] = "Almond/vendor/imgui"
 IncludeDir["glm"] = "Almond/vendor/glm"
+IncludeDir["stb_image"] = "Almond/vendor/stb_image"
 
 include "Almond/vendor/GLFW"
 include "Almond/vendor/Glad"
@@ -41,7 +42,9 @@ project "Almond"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp"
 	}
 
 	defines{
@@ -54,7 +57,8 @@ project "Almond"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links{
