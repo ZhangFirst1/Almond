@@ -57,17 +57,38 @@
     <ClInclude Include="src\Almond.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Almond\Application.h">
-      <Filter>src\Almond</Filter>
+    <ClInclude Include="src\Almond\Core\Application.h">
+      <Filter>src\Almond\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Almond\Core.h">
-      <Filter>src\Almond</Filter>
+    <ClInclude Include="src\Almond\Core\Core.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\EntryPoint.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\Input.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\KeyCodes.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\Layer.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\LayerStack.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\Log.h">
+      <Filter>src\Almond\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Core\MouseButtonCodes.h">
+      <Filter>src\Almond\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Almond\Core\Timestep.h">
       <Filter>src\Almond\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Almond\EntryPoint.h">
-      <Filter>src\Almond</Filter>
+    <ClInclude Include="src\Almond\Core\Window.h">
+      <Filter>src\Almond\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Almond\Events\ApplicationEvent.h">
       <Filter>src\Almond\Events</Filter>
@@ -84,24 +105,6 @@
     <ClInclude Include="src\Almond\ImGui\ImGuiLayer.h">
       <Filter>src\Almond\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Almond\Input.h">
-      <Filter>src\Almond</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Almond\KeyCodes.h">
-      <Filter>src\Almond</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Almond\Layer.h">
-      <Filter>src\Almond</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Almond\LayerStack.h">
-      <Filter>src\Almond</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Almond\Log.h">
-      <Filter>src\Almond</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Almond\MouseButtonCodes.h">
-      <Filter>src\Almond</Filter>
-    </ClInclude>
     <ClInclude Include="src\Almond\Renderer\Buffer.h">
       <Filter>src\Almond\Renderer</Filter>
     </ClInclude>
@@ -109,6 +112,9 @@
       <Filter>src\Almond\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Almond\Renderer\OrthographicCamera.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\OrthographicCameraController.h">
       <Filter>src\Almond\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Almond\Renderer\Renderer.h">
@@ -128,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="src\Almond\Renderer\VertexArray.h">
       <Filter>src\Almond\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Almond\Window.h">
-      <Filter>src\Almond</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLArrayVertex.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1418,8 +1421,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Almond\Application.cpp">
-      <Filter>src\Almond</Filter>
+    <ClCompile Include="src\Almond\Core\Application.cpp">
+      <Filter>src\Almond\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Core\Layer.cpp">
+      <Filter>src\Almond\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Core\LayerStack.cpp">
+      <Filter>src\Almond\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Core\Log.cpp">
+      <Filter>src\Almond\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Almond\ImGui\ImGuiBuild.cpp">
       <Filter>src\Almond\ImGui</Filter>
@@ -1427,19 +1439,13 @@
     <ClCompile Include="src\Almond\ImGui\ImGuiLayer.cpp">
       <Filter>src\Almond\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Almond\Layer.cpp">
-      <Filter>src\Almond</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Almond\LayerStack.cpp">
-      <Filter>src\Almond</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Almond\Log.cpp">
-      <Filter>src\Almond</Filter>
-    </ClCompile>
     <ClCompile Include="src\Almond\Renderer\Buffer.cpp">
       <Filter>src\Almond\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Almond\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Renderer\OrthographicCameraController.cpp">
       <Filter>src\Almond\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Almond\Renderer\Renderer.cpp">

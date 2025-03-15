@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include "Core.h"
-#include "Events/Event.h"
-#include "Window.h"
-#include "Events/ApplicationEvent.h"
+#include "Almond/Events/Event.h"
+#include "Almond/Core/Window.h"
+#include "Almond/Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Almond/ImGui/ImGuiLayer.h"
 
@@ -32,10 +32,12 @@ namespace Almond {
 		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 
 		std::unique_ptr<Window> m_Window;				// 窗口指针
 		ImGuiLayer* m_ImGuiLayer;						// ImGui指针
 		bool m_Running = true;							// 运行状态
+		bool m_Minimized = false;						// 最小化
 		LayerStack m_LayerStack;						// 图层栈帧
 
 		float m_LastFrameTime = 0.0f;					// 渲染上一帧的时间

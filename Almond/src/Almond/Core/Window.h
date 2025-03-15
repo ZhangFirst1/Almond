@@ -2,7 +2,7 @@
 
 #include "ampch.h"
 
-#include "Almond/Core.h"
+#include "Almond/Core/Core.h"
 #include "Almond/Events/Event.h"
 
 namespace Almond {

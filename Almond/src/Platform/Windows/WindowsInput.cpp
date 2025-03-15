@@ -1,6 +1,6 @@
 ﻿#include "ampch.h"
 #include "WindowsInput.h"
-#include "Almond/Application.h"
+#include "Almond/Core/Application.h"
 
 #include <GLFW/glfw3.h>
 

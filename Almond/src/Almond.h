@@ -2,17 +2,18 @@
 
 // 用于客户端使用
 
-#include "Almond/Application.h"
-#include "Almond/Log.h"
-#include "Almond/Layer.h"
+#include "Almond/Core/Application.h"
+#include "Almond/Core/Log.h"
+#include "Almond/Core/Layer.h"
 
 #include "Almond/Core/Timestep.h"
 
 #include "Almond/ImGui/ImGuiLayer.h"
 
-#include "Almond/Input.h"
-#include "Almond/KeyCodes.h"
-#include "Almond/MouseButtonCodes.h"
+#include "Almond/Core/Input.h"
+#include "Almond/Core/KeyCodes.h"
+#include "Almond/Core/MouseButtonCodes.h"
+#include "Almond/Renderer/OrthographicCameraController.h"
 
 //----------------Renderer-----------------
 
@@ -27,5 +28,5 @@
 #include "Almond/Renderer/OrthographicCamera.h"
 
 //----------------入口点-----------------
-#include "Almond/EntryPoint.h"
+#include "Almond/Core/EntryPoint.h"
 //---------------------------------------

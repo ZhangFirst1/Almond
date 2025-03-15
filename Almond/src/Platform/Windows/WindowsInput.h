@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Almond/Input.h"
+#include "Almond/Core/Input.h"
 
 namespace Almond {
 	class WindowsInput : public Input {

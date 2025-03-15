@@ -44,6 +44,7 @@ namespace Almond {
 		EventDispatcher dispatcher(e);				// 创建事件分发器
 		// 如果传进的事件类e是WindowCloseEvent类，使用分发器内部的回调函数调用OnWindowClose
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));	
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
 		// 事件处理，从栈顶（vector尾）到栈底（vector头）
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
@@ -61,9 +62,11 @@ namespace Almond {
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)				// 遍历图层栈
-				layer->OnUpdate(timestep);
+			if (!m_Minimized) {									// 最小化后不应该遍历图层栈
+				for (Layer* layer : m_LayerStack)				// 遍历图层栈
+					layer->OnUpdate(timestep);
 
+			}
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack)				// ImGui栈
 				layer->OnImGuiRender();
@@ -77,6 +80,19 @@ namespace Almond {
 	bool Application::OnWindowClose(WindowCloseEvent& e) {
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (m_Window->GetHeight() == 0 || m_Window->GetWidth() == 0) {
+			m_Minimized = true;
+			return false;
+		}
+	
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 
 }

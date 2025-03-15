@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Almond/Window.h"
+#include "Almond/Core/Window.h"
 #include "glad/glad.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 

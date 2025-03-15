@@ -1,7 +1,7 @@
 ﻿#pragma once
 // 轮询，用以获取输入状态
 
-#include "Almond/Core.h"
+#include "Almond/Core/Core.h"
 
 namespace Almond {
 	class ALMOND_API Input {

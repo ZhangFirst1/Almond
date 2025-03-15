@@ -13,7 +13,7 @@
 #include <unordered_set>
 #include <array>
 
-#include "Almond/Log.h"
+#include "Almond/Core/Log.h"
 
 #ifdef AM_PLATFORM_WINDOWS
 	#include <Windows.h>

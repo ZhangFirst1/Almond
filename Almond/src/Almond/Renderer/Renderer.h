@@ -11,6 +11,8 @@ namespace Almond {
 	class Renderer {
 	public:
 		static void Init();
+		static void OnWindowResize(uint32_t width, uint32_t height);
+
 		static void BeginScene(OrthographicCamera& camera);			// 负责每帧渲染前的环境设置
 		static void EndScene();										// 对收集到的场景数据进行优化
 		// 收集场景数据，同时收集渲染命令，提交渲染命令到队列里

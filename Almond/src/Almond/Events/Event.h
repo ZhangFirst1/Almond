@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Almond/Core.h"
+#include "Almond/Core/Core.h"
 
 namespace Almond {
 

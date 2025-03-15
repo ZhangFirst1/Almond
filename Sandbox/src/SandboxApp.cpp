@@ -9,7 +9,7 @@
 class ExampleLayer : public Almond::Layer {
 public:
 	ExampleLayer()
-		:Layer("Example"), m_Camera (-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_CameraRotation(0.0f) {
+		:Layer("Example"), m_CameraController (1280.0f / 720.0f, true) {
 		m_VertexArray.reset(Almond::VertexArray::Create());					// 创建VAO
 
 		float vertices[3 * 7] = {
@@ -136,29 +136,14 @@ public:
 	}
 
 	void OnUpdate(Almond::Timestep ts) override {
+		// Update
+		m_CameraController.OnUpdate(ts);
 
-		if (Almond::Input::IsKeypressed(AM_KEY_LEFT)) 
-			m_CameraPosition.x -= m_CameraSpeed * ts;
-		else if (Almond::Input::IsKeypressed(AM_KEY_RIGHT)) 
-			m_CameraPosition.x += m_CameraSpeed * ts;
-		
-		if (Almond::Input::IsKeypressed(AM_KEY_DOWN)) 
-			m_CameraPosition.y -= m_CameraSpeed * ts;
-		else if (Almond::Input::IsKeypressed(AM_KEY_UP)) 
-			m_CameraPosition.y += m_CameraSpeed * ts;
-
-		if (Almond::Input::IsKeypressed(AM_KEY_A))
-			m_CameraRotation -= m_RotationSpeed * ts;
-		else if (Almond::Input::IsKeypressed(AM_KEY_D))
-			m_CameraRotation += m_RotationSpeed * ts;
-
+		// Render
 		Almond::RendererCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Almond::RendererCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
-		Almond::Renderer::BeginScene(m_Camera);								// 负责每帧渲染前的环境设置
+		Almond::Renderer::BeginScene(m_CameraController.GetCamera());						// 负责每帧渲染前的环境设置
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -193,7 +178,7 @@ public:
 	}
 
 	void OnEvent(Almond::Event& event) override{
-
+		m_CameraController.OnEvent(event);
 	}
 
 private:
@@ -207,11 +192,7 @@ private:
 	Almond::Ref<Almond::Texture> m_Texture;				// 纹理指针
 	Almond::Ref<Almond::Texture> m_QUTTexture;			// 纹理指针
 
-	Almond::OrthographicCamera m_Camera;				// 摄像机
-	glm::vec3 m_CameraPosition;							// 相机位置 
-	float m_CameraSpeed = 2.0f;							// 相机移动速度
-	float m_CameraRotation;								// 相机初始旋转角度
-	float m_RotationSpeed = 30.0f;						// 相机旋转速度
+	Almond::OrthographicCameraController m_CameraController;// 摄像机控制器
 
 	glm::vec3 m_SquareColor = { 0.1f, 0.2f, 0.8f };
 };
