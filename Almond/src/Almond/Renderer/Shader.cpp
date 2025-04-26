@@ -5,6 +5,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Almond {
+	// 根据路径创建shader
 	Ref<Shader> Shader::Create(const std::string& filePath)
 	{
 		switch (Renderer::GetAPI())
@@ -16,7 +17,7 @@ namespace Almond {
 		AM_CORE_ASSERT(false, "RendererAPI is still unkonw!");
 		return nullptr;
 	}
-
+	// 根据顶点着色器和片段着色器代码创建shader
 	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) {
 		switch (Renderer::GetAPI())
 		{

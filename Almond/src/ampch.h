@@ -14,6 +14,7 @@
 #include <array>
 
 #include "Almond/Core/Log.h"
+#include "Almond/Debug/Instrumentor.h"
 
 #ifdef AM_PLATFORM_WINDOWS
 	#include <Windows.h>

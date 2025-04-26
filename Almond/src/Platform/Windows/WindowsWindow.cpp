@@ -19,6 +19,8 @@ namespace Almond {
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props) {
+		AM_PROFILE_FUNCTION();
+
 		Init(props);
 	}
 
@@ -27,6 +29,8 @@ namespace Almond {
 	}
 
 	void WindowsWindow::Init(const WindowProps& props) {
+		AM_PROFILE_FUNCTION();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -35,6 +39,7 @@ namespace Almond {
 
 		// 如果未初始化，执行初始化
 		if (!s_GLFWInitialized) {
+			AM_PROFILE_SCOPE("glfwInit");
 			int success = glfwInit();
 			AM_CORE_ASSERT(success, "Failed to initialized GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
@@ -42,7 +47,10 @@ namespace Almond {
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		{
+			AM_PROFILE_SCOPE("glfwCreateWindow");
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		}
 
 		m_Context = new OpenGLContext(m_Window);						// 自定义OpenGL上下文
 		m_Context->Init();
@@ -126,19 +134,21 @@ namespace Almond {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
 			MouseMovedEvent event((float)xPos, (float)yPos);
+			// AM_CORE_TRACE("{0}, {1}", xPos, yPos);
 			data.EventCallback(event);
 		});
 
 	}
 
 	void WindowsWindow::Shutdown() {
+		AM_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window);
 	}
 
 	void WindowsWindow::OnUpdate() {
 		glfwPollEvents();
 		m_Context->SwapBuffers();
-		
 	}
 
 	void WindowsWindow::SetVSync(bool enabled) {

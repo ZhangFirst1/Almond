@@ -12,6 +12,8 @@ namespace Almond {
 	}
 
 	void OpenGLContext::Init() {
+		AM_PROFILE_FUNCTION();
+
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);	// 初始化glad
 		AM_CORE_ASSERT(status, "Failed to initialize GLAD!");
@@ -20,10 +22,11 @@ namespace Almond {
 		AM_CORE_INFO("	Vendor : {0}", glGetString(GL_VENDOR));
 		AM_CORE_INFO("	Renderer : {0}", glGetString(GL_RENDERER));
 		AM_CORE_INFO("	version : {0}", glGetString(GL_VERSION));
-
 	}
 
 	void OpenGLContext::SwapBuffers() {
+		AM_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 

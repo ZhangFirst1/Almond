@@ -1,16 +1,19 @@
 ﻿#include <ampch.h>
 #include <Almond.h>
+#include <Almond/Core/EntryPoint.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "imgui/imgui.h"
+#include "Sandbox2D.h"
 
 class ExampleLayer : public Almond::Layer {
 public:
 	ExampleLayer()
 		:Layer("Example"), m_CameraController (1280.0f / 720.0f, true) {
-		m_VertexArray.reset(Almond::VertexArray::Create());					// 创建VAO
+		m_VertexArray = Almond::VertexArray::Create();					// 创建VAO
 
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
@@ -18,8 +21,7 @@ public:
 			0.0f,  0.5f, 0.0f,	0.8f, 0.3f, 0.4f, 1.0f
 		};
 
-		Almond::Ref<Almond::VertexBuffer> vertexBuffer;
-		vertexBuffer.reset(Almond::VertexBuffer::Create(vertices, sizeof(vertices)));	 // 创建vertex buffer
+		Almond::Ref<Almond::VertexBuffer> vertexBuffer = Almond::VertexBuffer::Create(vertices, sizeof(vertices));	 // 创建vertex buffer
 
 		// 设置顶点属性
 		Almond::BufferLayout layout = {
@@ -30,11 +32,10 @@ public:
 		m_VertexArray->AddVertexBuffer(vertexBuffer);				// VAO绑定vertex buffer
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		Almond::Ref<Almond::IndexBuffer> indexBuffer;
-		indexBuffer.reset(Almond::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		Almond::Ref<Almond::IndexBuffer> indexBuffer = Almond::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->SetIndexBuffer(indexBuffer);				// VAO绑定index buffer
 
-		m_SquareVA.reset(Almond::VertexArray::Create());
+		m_SquareVA = Almond::VertexArray::Create();
 
 		float squareVertices[4 * 5] = {
 			-0.5f,-0.5f, 0.0f, 0.0f, 0.0f,
@@ -43,8 +44,7 @@ public:
 			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
 		};
 
-		Almond::Ref <Almond::VertexBuffer> squareVB;
-		squareVB.reset(Almond::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		Almond::Ref <Almond::VertexBuffer> squareVB = Almond::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 
 		Almond::BufferLayout squareLayout = {
 			{ Almond::ShaderDataType::Float3, "a_Position"},
@@ -54,8 +54,7 @@ public:
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		Almond::Ref<Almond::IndexBuffer> squareIndexBuffer;
-		squareIndexBuffer.reset(Almond::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		Almond::Ref<Almond::IndexBuffer> squareIndexBuffer = Almond::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		m_SquareVA->SetIndexBuffer(squareIndexBuffer);				// VAO绑定index buffer
 
 		// Shader
@@ -126,7 +125,7 @@ public:
 
 		m_Shader = Almond::Shader::Create("VertexPosShader", vertexSrc, fragmentSrc);
 		m_BlueShader = Almond::Shader::Create("FlatPosShader", blueVertexSrc, blueFragmentSrc);
-		auto textureShader = m_ShaderLibrary.Load("shaders/Texture.glsl");
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = Almond::Texture2D::Create("assets/textures/wood.png");
 		m_QUTTexture = Almond::Texture2D::Create("assets/textures/QUT.png");
@@ -200,8 +199,8 @@ private:
 class Sandbox : public Almond::Application {
 public:
 	Sandbox() {
-		PushLayer(new ExampleLayer());
-
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox() {

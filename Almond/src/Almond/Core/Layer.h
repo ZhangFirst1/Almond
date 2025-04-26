@@ -4,6 +4,8 @@
 #include "Almond/Events/Event.h"
 #include "Almond/Core/Timestep.h"
 
+#include <string>
+
 namespace Almond{
 	class ALMOND_API Layer {
 	public:

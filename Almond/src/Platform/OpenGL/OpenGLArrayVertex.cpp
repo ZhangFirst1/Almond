@@ -36,16 +36,22 @@ namespace Almond {
 
 	void OpenGLVertexArray::Bind() const
 	{
+		AM_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererID);
 	}
 
 	void OpenGLVertexArray::Unbind() const
 	{
+		AM_PROFILE_FUNCTION();
+
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexbuffer)
 	{
+		AM_PROFILE_FUNCTION();
+
 		AM_CORE_ASSERT(vertexbuffer->GetLayout().GetElements().size(), "Vertex buffer has no layout!");
 
 		glBindVertexArray(m_RendererID);
@@ -69,6 +75,8 @@ namespace Almond {
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexbuffer)
 	{
+		AM_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererID);
 		indexbuffer->Bind();
 

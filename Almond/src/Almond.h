@@ -28,5 +28,5 @@
 #include "Almond/Renderer/OrthographicCamera.h"
 
 //----------------入口点-----------------
-#include "Almond/Core/EntryPoint.h"
+
 //---------------------------------------

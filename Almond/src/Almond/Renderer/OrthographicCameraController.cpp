@@ -14,6 +14,8 @@ namespace Almond {
 
 	void Almond::OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		AM_PROFILE_FUNCTION();
+
 		if (Almond::Input::IsKeypressed(AM_KEY_A))
 			m_CameraPosition.x -= m_CameraTranslateSpeed * ts;
 		else if (Almond::Input::IsKeypressed(AM_KEY_D))
@@ -38,6 +40,8 @@ namespace Almond {
 
 	void Almond::OrthographicCameraController::OnEvent(Event& e)
 	{
+		AM_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(AM_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(AM_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -45,6 +49,8 @@ namespace Almond {
 
 	bool Almond::OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		AM_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.5f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -53,6 +59,8 @@ namespace Almond {
 
 	bool Almond::OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		AM_PROFILE_FUNCTION();
+
 		m_ZoomLevel = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;

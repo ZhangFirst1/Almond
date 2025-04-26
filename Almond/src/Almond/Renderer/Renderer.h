@@ -8,6 +8,10 @@
 
 namespace Almond {
 
+	/*
+		Renderer -> RendererCommand(有RendererAPI指针) -> RendererAPI -> 调用由具体平台实现的RendererAPI中的渲染方法，如OpenGLRendererAPI。
+	*/
+
 	class Renderer {
 	public:
 		static void Init();

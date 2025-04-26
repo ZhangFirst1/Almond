@@ -5,6 +5,7 @@
 namespace Almond {
 
 	//需要实现glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr)的抽象
+	// 
 	// Shader数据类型
 	enum class ShaderDataType {
 		None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool
@@ -112,13 +113,18 @@ namespace Almond {
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
+		virtual void SetData(const void* data, uint32_t size) = 0;
+
 		virtual const BufferLayout& GetLayout() const = 0;
 		virtual void SetLayout(const BufferLayout& layout) = 0;
 
-		static VertexBuffer* Create(float* vertices, unsigned int size);
+
+		static Ref<VertexBuffer> Create(uint32_t size);
+		static Ref<VertexBuffer> Create(float* vertices, uint32_t size);
 	};
 
 	// Index Buffer
+	// 目前只支持32-bit的index buffer
 	class IndexBuffer {
 	public:
 		virtual ~IndexBuffer() {}
@@ -128,7 +134,7 @@ namespace Almond {
 
 		virtual unsigned int GetCount() const = 0;
 
-		static IndexBuffer* Create(unsigned int* indices, unsigned int size);
+		static Ref<IndexBuffer>Create(unsigned int* indices, uint32_t count);
 	};
 
 }

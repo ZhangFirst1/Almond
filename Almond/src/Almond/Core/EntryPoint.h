@@ -6,15 +6,19 @@ extern Almond::Application* Almond::CreateApplication();
 
 int main(int argc, char** argv) {
 	Almond::Log::Init();
-	AM_CORE_WARN("Initialized Log!");
-	int a = 10; 
-	AM_INFO("Initialized Log! Var={0}", a);
-
-	AM_CORE_ERROR("lfqlfqlfq");
-
+	
+	AM_PROFILE_BEGIN_SESSION("Startup", "AlmondProfile-Startup.json");
 	auto app = Almond::CreateApplication();
+	AM_PROFILE_END_SESSION();
+
+	AM_PROFILE_BEGIN_SESSION("Runtime", "AlmondProfile-Runtime.json");
 	app->Run();
+	AM_PROFILE_END_SESSION();
+
+
+	AM_PROFILE_BEGIN_SESSION("Shutdown", "AlmondProfile-Shutdown.json");
 	delete app;
+	AM_PROFILE_END_SESSION();
 }
 
 #endif

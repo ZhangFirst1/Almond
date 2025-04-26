@@ -2,13 +2,17 @@
 #include "Renderer.h"
 #include "RendererCommand.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Renderer2D.h"
 
 namespace Almond {
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData();
 
 	void Renderer::Init()
 	{
+		AM_PROFILE_FUNCTION();
+
 		RendererCommand::Init();
+		Renderer2D::Init();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -20,10 +24,12 @@ namespace Almond {
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
+
 	void Renderer::EndScene()
 	{
 
 	}
+	// 接收 shader、vertexArrary、transform
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->Bind();

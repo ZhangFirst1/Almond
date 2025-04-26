@@ -23,6 +23,7 @@ namespace Almond{
 		virtual void SetVSync(bool enable = 0) override;							
 		virtual bool IsSyne() const override;
 
+		// 暂时返回GLFWwindow，但以后可能有其他接口，故返回void*
 		inline virtual void* GetNativeWindow() const override { return m_Window; }
 	private:
 		virtual void Init(const WindowProps& props);

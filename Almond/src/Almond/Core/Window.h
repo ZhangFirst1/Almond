@@ -22,6 +22,7 @@ namespace Almond {
 	// Window窗口接口
 	class ALMOND_API Window {
 	public:
+		// 每个窗口都有函数指针，用来接收事件
 		using EventCallbackFn = std::function<void(Event&)>;
 
 		virtual ~Window() {}

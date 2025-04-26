@@ -13,38 +13,48 @@ namespace Almond {
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application() {
+		AM_PROFILE_FUNCTION();
+
 		AM_CORE_ASSERT(!s_Instance, "Application has existed!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口，此处m_Window是Application类中的，与WindowsWindow类中不同
+		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();							// 初始化ImGuiLayer
 		PushOverlay(m_ImGuiLayer);
-		
 	}
 
 	Application::~Application() {
+		AM_PROFILE_FUNCTION();
 
+		// Renderer::Shutdonw();
 	}
 
 	void Application::PushLayer(Layer* layer) {
+		AM_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer) {
+		AM_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e) {
+		AM_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);				// 创建事件分发器
 		// 如果传进的事件类e是WindowCloseEvent类，使用分发器内部的回调函数调用OnWindowClose
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));	
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+		// dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(OnMouseMoved));
 
 		// 事件处理，从栈顶（vector尾）到栈底（vector头）
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
@@ -52,25 +62,32 @@ namespace Almond {
 			if (e.Handled)
 				break;
 		}
-
 	}
 
 	void Application::Run() {
+		AM_PROFILE_FUNCTION();
+
 		while (m_Running) {
+			AM_PROFILE_SCOPE("Run Loop");
 			// 计算帧间隔时间
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized) {									// 最小化后不应该遍历图层栈
-				for (Layer* layer : m_LayerStack)				// 遍历图层栈
-					layer->OnUpdate(timestep);
-
+				{
+					AM_PROFILE_SCOPE("LayerStack OnUpdate");
+					for (Layer* layer : m_LayerStack)				// 遍历图层栈
+						layer->OnUpdate(timestep);
+				}
+				m_ImGuiLayer->Begin();
+				{
+					AM_PROFILE_SCOPE("LayerStack OnImGuiRenderer");
+					for (Layer* layer : m_LayerStack)				// ImGui栈
+						layer->OnImGuiRender();
+				}
+				m_ImGuiLayer->End();
 			}
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)				// ImGui栈
-				layer->OnImGuiRender();
-			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}
@@ -84,6 +101,9 @@ namespace Almond {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		AM_PROFILE_FUNCTION();
+
+		// 最小化
 		if (m_Window->GetHeight() == 0 || m_Window->GetWidth() == 0) {
 			m_Minimized = true;
 			return false;
