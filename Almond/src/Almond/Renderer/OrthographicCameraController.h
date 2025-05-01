@@ -7,6 +7,16 @@
 
 namespace Almond {
 
+	// 相机边界
+	struct OrthographicCameraBounds {
+		float Left, Right;
+		float Bottom, Top;
+
+		float GetWidth() { return Right - Left; }
+		float GetHeight() { return Top - Bottom; }
+	};
+
+
 	class OrthographicCameraController {
 	public:
 		OrthographicCameraController(float aspectRation, bool rotation = false);
@@ -17,16 +27,20 @@ namespace Almond {
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
 
-		void SetZoomLevel(const float zoom) { m_ZoomLevel = zoom; }
+		void SetZoomLevel(const float zoom) { m_ZoomLevel = zoom; CalculateView(); }
 		float GetZoomLevel() const { return m_ZoomLevel; }
 
+		const OrthographicCameraBounds& GetBounds() { return m_Bounds; }
 	private:
+		void CalculateView();
+
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 
 	private:
 		float m_AspectRatio;				// 长宽比
 		float m_ZoomLevel = 1.0f;			// 缩放等级
+		OrthographicCameraBounds m_Bounds;	// 相机边界
 		OrthographicCamera m_Camera;		// 摄像机
 
 		bool m_Rotation;					// 是否启用旋转

@@ -15,6 +15,7 @@
 
 #include "Almond/Core/Log.h"
 #include "Almond/Debug/Instrumentor.h"
+#include "Almond/Core/Core.h"
 
 #ifdef AM_PLATFORM_WINDOWS
 	#include <Windows.h>

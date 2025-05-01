@@ -1421,6 +1421,7 @@
     </ClInclude>
     <ClInclude Include="src\Almond\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Almond\Debug\Instrumentor.h" />
+    <ClInclude Include="src\Almond\Renderer\SubTexture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Almond\Core\Application.cpp">
@@ -1499,5 +1500,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Almond\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\Almond\Renderer\SubTexture2D.cpp" />
   </ItemGroup>
 </Project>

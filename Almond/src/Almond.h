@@ -23,6 +23,7 @@
 #include "Almond/Renderer/Shader.h"
 #include "Almond/Renderer/Buffer.h"
 #include "Almond/Renderer/Texture.h"
+#include "Almond/Renderer/SubTexture2D.h"
 #include "Almond/Renderer/VertexArray.h"
 
 #include "Almond/Renderer/OrthographicCamera.h"

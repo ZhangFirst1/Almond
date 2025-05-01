@@ -206,7 +206,8 @@ namespace Almond {
 	//}
 }
 
-#define AM_PROFILE 1
+// 暂时禁用
+#define AM_PROFILE 0
 
 #ifdef AM_PROFILE
 	#define AM_PROFILE_BEGIN_SESSION(name, filepath) ::Almond::Instrumentor::Get().BeginSession(name, filepath)
