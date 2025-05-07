@@ -6,24 +6,24 @@
 
 namespace Almond {
 
-	Almond::OrthographicCameraController::OrthographicCameraController(float aspectRation, bool rotation)
+	OrthographicCameraController::OrthographicCameraController(float aspectRation, bool rotation)
 		:m_AspectRatio(aspectRation), m_Bounds({ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel }), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
 	{
 
 	}
 
-	void Almond::OrthographicCameraController::OnUpdate(Timestep ts)
+	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
 		AM_PROFILE_FUNCTION();
 
-		if (Almond::Input::IsKeypressed(AM_KEY_A))
+		if (Input::IsKeypressed(AM_KEY_A))
 			m_CameraPosition.x -= m_CameraTranslateSpeed * ts;
-		else if (Almond::Input::IsKeypressed(AM_KEY_D))
+		else if (Input::IsKeypressed(AM_KEY_D))
 			m_CameraPosition.x += m_CameraTranslateSpeed * ts;
 
-		if (Almond::Input::IsKeypressed(AM_KEY_S))
+		if (Input::IsKeypressed(AM_KEY_S))
 			m_CameraPosition.y -= m_CameraTranslateSpeed * ts;
-		else if (Almond::Input::IsKeypressed(AM_KEY_W))
+		else if (Input::IsKeypressed(AM_KEY_W))
 			m_CameraPosition.y += m_CameraTranslateSpeed * ts;
 
 		if (m_Rotation) {
@@ -47,6 +47,12 @@ namespace Almond {
 		dispatcher.Dispatch<WindowResizeEvent>(AM_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
 	}
 
+	void OrthographicCameraController::OnResize(float width, float height)
+	{
+		m_AspectRatio = width / height;
+		CalculateView();
+	}
+
 	void OrthographicCameraController::CalculateView()
 	{
 		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
@@ -67,8 +73,7 @@ namespace Almond {
 	{
 		AM_PROFILE_FUNCTION();
 
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		CalculateView();
+		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
 	}
 

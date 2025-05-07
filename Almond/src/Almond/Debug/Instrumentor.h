@@ -206,19 +206,36 @@ namespace Almond {
 	//}
 }
 
-// 暂时禁用
-#define AM_PROFILE 0
+//// 暂时禁用
+//#define AM_PROFILE 0
+//
+//#ifdef AM_PROFILE
+//	#define AM_PROFILE_BEGIN_SESSION(name, filepath) ::Almond::Instrumentor::Get().BeginSession(name, filepath)
+//	#define AM_PROFILE_END_SESSION() ::Almond::Instrumentor::Get().EndSession()
+//	// ##__LINE__(name)可以用当前行号拼接变量名，如InstrumentationTimer timer42(name)
+//	#define AM_PROFILE_SCOPE(name) ::Almond::InstrumentationTimer timer##__LINE__(name);
+//	// __FUNSIG__用于返回完整的函数签名作为名称，如	AM_PROFILE_SCOPE("void MyClass::Foo(int)")
+//	#define AM_PROFILE_FUNCTION() AM_PROFILE_SCOPE(__FUNCSIG__)
+//#else
+//	#define AM_PROFILE_BEGIN_SESSION(name, filepath)
+//	#define AM_PROFILE_END_SESSION()
+//	#define AM_PROFILE_SCOPE(name)
+//	#define AM_PROFILE_FUNCTION()
+//#endif
 
-#ifdef AM_PROFILE
-	#define AM_PROFILE_BEGIN_SESSION(name, filepath) ::Almond::Instrumentor::Get().BeginSession(name, filepath)
-	#define AM_PROFILE_END_SESSION() ::Almond::Instrumentor::Get().EndSession()
-	// ##__LINE__(name)可以用当前行号拼接变量名，如InstrumentationTimer timer42(name)
-	#define AM_PROFILE_SCOPE(name) ::Almond::InstrumentationTimer timer##__LINE__(name);
-	// __FUNSIG__用于返回完整的函数签名作为名称，如	AM_PROFILE_SCOPE("void MyClass::Foo(int)")
-	#define AM_PROFILE_FUNCTION() AM_PROFILE_SCOPE(__FUNCSIG__)
+#define AM_PROFILE 0
+#if AM_PROFILE
+
+#define AM_PROFILE_BEGIN_SESSION(name, filepath) ::Hazel::Instrumentor::Get().BeginSession(name, filepath)
+#define AM_PROFILE_END_SESSION() ::Hazel::Instrumentor::Get().EndSession()
+#define AM_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Hazel::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+											   ::Hazel::InstrumentationTimer timer##line(fixedName##line.Data)
+#define AM_PROFILE_SCOPE_LINE(name, line) AM_PROFILE_SCOPE_LINE2(name, line)
+#define AM_PROFILE_SCOPE(name) AM_PROFILE_SCOPE_LINE(name, __LINE__)
+#define AM_PROFILE_FUNCTION() AM_PROFILE_SCOPE(AM_FUNC_SIG)
 #else
-	#define AM_PROFILE_BEGIN_SESSION(name, filepath)
-	#define AM_PROFILE_END_SESSION()
-	#define AM_PROFILE_SCOPE(name)
-	#define AM_PROFILE_FUNCTION()
+#define AM_PROFILE_BEGIN_SESSION(name, filepath)
+#define AM_PROFILE_END_SESSION()
+#define AM_PROFILE_SCOPE(name)
+#define AM_PROFILE_FUNCTION()
 #endif

@@ -12,13 +12,13 @@ namespace Almond {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application() {
+	Application::Application(const std::string& name) {
 		AM_PROFILE_FUNCTION();
 
 		AM_CORE_ASSERT(!s_Instance, "Application has existed!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());		// 创建窗口
+		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));		// 创建窗口
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		Renderer::Init();
@@ -47,6 +47,10 @@ namespace Almond {
 		layer->OnAttach();
 	}
 
+	void Application::Close() {
+		m_Running = false;
+	}
+
 	void Application::OnEvent(Event& e) {
 		AM_PROFILE_FUNCTION();
 
@@ -58,9 +62,9 @@ namespace Almond {
 
 		// 事件处理，从栈顶（vector尾）到栈底（vector头）
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
-			(*--it)->OnEvent(e);
 			if (e.Handled)
 				break;
+			(*--it)->OnEvent(e);
 		}
 	}
 

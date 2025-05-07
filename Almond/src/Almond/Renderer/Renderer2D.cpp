@@ -116,6 +116,21 @@ namespace Almond {
 
 	}
 
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
+	{
+		AM_PROFILE_FUNCTION();
+		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);	// transform是对相机的操作，要取反
+
+		// Upload只是单纯的上传数据到GPU，set表示可能有其他操作，更高级
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
+	}
+
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		AM_PROFILE_FUNCTION();
@@ -170,30 +185,10 @@ namespace Almond {
 	{
 		AM_PROFILE_FUNCTION();
 
-		// 如果绘制顶点数量大于单次批渲染限制的最大数量，开启新的批渲染
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-			FlushAndReset();
-
-		const float texIndex = 0.0f;		// 0表示白色纹理
-		const float tilingFactor = 1.0f;
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		constexpr size_t quadVertexCount = 4;
-
 		// 变换矩阵
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x ,size.y, 1.0f });
-
-		for (size_t i = 0; i < quadVertexCount; i++) {
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
-		}
-
-		s_Data.QuadIndexCount += 6;		// 绘制了一个长方形，即6个顶点
-		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
+		DrawQuad(transform, color);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const float tilingFactor, const glm::vec4& tintColor)
@@ -204,47 +199,11 @@ namespace Almond {
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const float tilingFactor, const glm::vec4& tintColor)
 	{
 		AM_PROFILE_FUNCTION();
-
-		// 如果绘制顶点数量大于单次批渲染限制的最大数量，开启新的批渲染
-		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-			FlushAndReset();
-
-		constexpr glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
-		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		constexpr size_t quadVertexCount = 4;
-		
-		// 为当前纹理分配纹理槽，若已存在则复用，否则分配一个标号为TextureSlotIndex的纹理槽
-		float textureIndex = 0.0f;		// 0表示白色纹理
-		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++) {
-			if (*s_Data.TextureSlots[i].get() == *texture.get()) {
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		if (textureIndex == 0.0f) {
-			if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-				FlushAndReset();
-
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex++] = texture;
-		}
-
 		// 变换矩阵
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x ,size.y, 1.0f });
 
-		for (size_t i = 0; i < quadVertexCount; i++) {
-			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
-			s_Data.QuadVertexBufferPtr->Color = color;
-			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
-			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-			s_Data.QuadVertexBufferPtr++;
-		}
-
-		s_Data.QuadIndexCount += 6;		// 绘制了一个长方形，即6个顶点
-		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
+		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const float tilingFactor, const glm::vec4& tintColor) {
@@ -283,6 +242,74 @@ namespace Almond {
 		// 变换矩阵
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x ,size.y, 1.0f });
+
+		for (size_t i = 0; i < quadVertexCount; i++) {
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
+
+		s_Data.QuadIndexCount += 6;		// 绘制了一个长方形，即6个顶点
+		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	{
+		AM_PROFILE_FUNCTION();
+
+		// 如果绘制顶点数量大于单次批渲染限制的最大数量，开启新的批渲染
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+			FlushAndReset();
+
+		const float texIndex = 0.0f;		// 0表示白色纹理
+		const float tilingFactor = 1.0f;
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		constexpr size_t quadVertexCount = 4;
+
+		for (size_t i = 0; i < quadVertexCount; i++) {
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+			s_Data.QuadVertexBufferPtr->Color = color;
+			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
+			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
+			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr++;
+		}
+
+		s_Data.QuadIndexCount += 6;		// 绘制了一个长方形，即6个顶点
+		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const float tilingFactor, const glm::vec4& tintColor)
+	{
+		AM_PROFILE_FUNCTION();
+
+		// 如果绘制顶点数量大于单次批渲染限制的最大数量，开启新的批渲染
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+			FlushAndReset();
+
+		constexpr glm::vec4 color = { 1.0f,1.0f,1.0f,1.0f };
+		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		constexpr size_t quadVertexCount = 4;
+
+		// 为当前纹理分配纹理槽，若已存在则复用，否则分配一个标号为TextureSlotIndex的纹理槽
+		float textureIndex = 0.0f;		// 0表示白色纹理
+		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++) {
+			if (*s_Data.TextureSlots[i].get() == *texture.get()) {
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f) {
+			if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+				FlushAndReset();
+
+			textureIndex = (float)s_Data.TextureSlotIndex;
+			s_Data.TextureSlots[s_Data.TextureSlotIndex++] = texture;
+		}
 
 		for (size_t i = 0; i < quadVertexCount; i++) {
 			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];

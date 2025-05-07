@@ -18,7 +18,7 @@ namespace Almond {
 	class ALMOND_API Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Almond App");
 		virtual ~Application();
 
 		void Run();
@@ -27,6 +27,10 @@ namespace Almond {
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
+
+		void Close();
+
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		inline Window& GetWindow(){ return *m_Window; }
 		inline static Application& Get() { return *s_Instance; }

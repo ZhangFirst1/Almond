@@ -108,6 +108,4 @@ void ParticleSystem::Emit(const ParticleProps& particleProps)
 		m_PoolIndex = m_ParticlePool.size() - 1;
 	else
 		m_PoolIndex--;
-
-
 }

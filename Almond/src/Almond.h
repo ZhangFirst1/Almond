@@ -15,12 +15,18 @@
 #include "Almond/Core/MouseButtonCodes.h"
 #include "Almond/Renderer/OrthographicCameraController.h"
 
+#include "Almond/Scene/Scene.h"
+#include "Almond/Scene/Entity.h"
+#include "Almond/Scene/Components.h"
+#include "Almond/Scene/ScriptableEntity.h"
+
 //----------------Renderer-----------------
 
 #include "Almond/Renderer/Renderer.h"
 #include "Almond/Renderer/RendererCommand.h"
 
 #include "Almond/Renderer/Shader.h"
+#include "Almond/Renderer/Framebuffer.h"
 #include "Almond/Renderer/Buffer.h"
 #include "Almond/Renderer/Texture.h"
 #include "Almond/Renderer/SubTexture2D.h"

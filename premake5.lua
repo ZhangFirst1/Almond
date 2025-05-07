@@ -15,6 +15,7 @@ IncludeDir["GLFW"] = "Almond/vendor/GLFW/include"
 IncludeDir["Glad"] = "Almond/vendor/Glad/include"
 IncludeDir["ImGui"] = "Almond/vendor/imgui"
 IncludeDir["glm"] = "Almond/vendor/glm"
+IncludeDir["entt"] = "Almond/vendor/entt/include"
 IncludeDir["stb_image"] = "Almond/vendor/stb_image"
 
 include "Almond/vendor/GLFW"
@@ -58,7 +59,8 @@ project "Almond"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 
 	links{
@@ -114,7 +116,63 @@ project "Sandbox"
 		"$(SolutionDir)/Almond/vendor/spdlog/include",
 		"$(SolutionDir)Almond/src",
 		"$(SolutionDir)Almond/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
+	}
+
+	links{
+		"Almond"
+	}
+
+	filter "system:windows"
+		cppdialect "C++17"
+		systemversion "latest"
+
+		defines{
+			"AM_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines "AM_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "AM_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "AM_DIST"
+		runtime "Release"
+		optimize "on"
+
+
+project "Almond-Editor"
+	location "Almond-Editor" 
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	buildoptions{
+		"/utf-8"
+	}
+
+	files{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs {
+		"$(SolutionDir)/Almond/vendor/spdlog/include",
+		"$(SolutionDir)Almond/src",
+		"$(SolutionDir)Almond/vendor",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links{
