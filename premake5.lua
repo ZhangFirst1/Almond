@@ -1,6 +1,6 @@
 workspace "Almond"
 	architecture "x64"
-	startproject "Sandbox"
+	startproject "Almond-Editor"
 
 	configurations{
 		"Debug",
@@ -17,10 +17,12 @@ IncludeDir["ImGui"] = "Almond/vendor/imgui"
 IncludeDir["glm"] = "Almond/vendor/glm"
 IncludeDir["entt"] = "Almond/vendor/entt/include"
 IncludeDir["stb_image"] = "Almond/vendor/stb_image"
+IncludeDir["yaml_cpp"] = "Almond/vendor/yaml-cpp/include"
 
 include "Almond/vendor/GLFW"
 include "Almond/vendor/Glad"
 include "Almond/vendor/imgui"
+include "Almond/vendor/yaml-cpp"
 
 project "Almond"
 	location "Almond"
@@ -49,7 +51,8 @@ project "Almond"
 	}
 
 	defines{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"YAML_CPP_STATIC_DEFINE"
 	}
 
 	includedirs {
@@ -60,14 +63,16 @@ project "Almond"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links{
 		"GLFW",
 		"Glad",
 		"opengl32.lib",
-		"ImGui"
+		"ImGui",
+		"yaml-cpp"
 	}
 
 	filter "system:windows"
@@ -167,12 +172,17 @@ project "Almond-Editor"
 		"%{prj.name}/src/**.cpp"
 	}
 
+	defines{
+		"YAML_CPP_STATIC_DEFINE"
+	}
+
 	includedirs {
 		"$(SolutionDir)/Almond/vendor/spdlog/include",
 		"$(SolutionDir)Almond/src",
 		"$(SolutionDir)Almond/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links{

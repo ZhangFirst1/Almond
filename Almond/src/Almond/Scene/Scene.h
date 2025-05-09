@@ -15,15 +15,20 @@ namespace Almond {
 
 		// Temp 不应将entt的内容返回给客户端
 		Entity CreateEntity(const std::string& name = std::string());
-
+		void DestroyEntity(Entity entity);
+		
 		void OnUpdate(Timestep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
-
+	private:
+		template<typename T>
+		void OnComponentAdded(Entity entity, T& component);
 	private:
 		entt::registry m_Registry;		// entt的数据结构，用于管理实体和组件
-		uint32_t m_ViewportWidth, m_ViewportHeight;
+		uint32_t m_ViewportWidth, m_ViewportHeight;	// 视口大小
 
 		friend class Entity;
+		friend class SceneSerializer;
+		friend class SceneHierarchyPanel;
 	};
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Almond.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Almond {
 
@@ -35,6 +36,9 @@ namespace Almond {
 
 		glm::vec2 m_ViewportSize = {0.0f, 0.0f};				// 视口大小
 		glm::vec4 m_SquareColor = { 0.1f, 0.2f, 0.8f, 1.0f };
+
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 
 }

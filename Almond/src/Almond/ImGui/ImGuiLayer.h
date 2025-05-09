@@ -21,6 +21,7 @@ namespace Almond {
 		void End();
 
 		void SetBlockEvents(bool block) { m_BlockEvents = block; }
+		void SetDarkThemeColors();		// 设置暗系主题
 	private:
 		bool m_BlockEvents = true;
 		float m_Time = 0.0f;

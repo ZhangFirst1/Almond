@@ -117,6 +117,9 @@
     <ClInclude Include="src\Almond\Renderer\Buffer.h">
       <Filter>src\Almond\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Almond\Renderer\Camera.h">
+      <Filter>src\Almond\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Almond\Renderer\Framebuffer.h">
       <Filter>src\Almond\Renderer</Filter>
     </ClInclude>
@@ -153,7 +156,19 @@
     <ClInclude Include="src\Almond\Renderer\VertexArray.h">
       <Filter>src\Almond\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Almond\Scene\Components.h">
+      <Filter>src\Almond\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Scene\Entity.h">
+      <Filter>src\Almond\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Almond\Scene\Scene.h">
+      <Filter>src\Almond\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Scene\SceneCamera.h">
+      <Filter>src\Almond\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Almond\Scene\ScriptableEntity.h">
       <Filter>src\Almond\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLArrayVertex.h">
@@ -1440,11 +1455,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Almond\Scene\Components.h" />
-    <ClInclude Include="src\Almond\Scene\Entity.h" />
-    <ClInclude Include="src\Almond\Renderer\Camera.h" />
-    <ClInclude Include="src\Almond\Scene\SceneCamera.h" />
-    <ClInclude Include="src\Almond\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Almond\Scene\SceneSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Almond\Core\Application.cpp">
@@ -1501,7 +1512,13 @@
     <ClCompile Include="src\Almond\Renderer\VertexArray.cpp">
       <Filter>src\Almond\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Almond\Scene\Entity.cpp">
+      <Filter>src\Almond\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Almond\Scene\Scene.cpp">
+      <Filter>src\Almond\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Almond\Scene\SceneCamera.cpp">
       <Filter>src\Almond\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLArrayVertex.cpp">
@@ -1537,7 +1554,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Almond\Scene\Entity.cpp" />
-    <ClCompile Include="src\Almond\Scene\SceneCamera.cpp" />
+    <ClCompile Include="src\Almond\Scene\SceneSerializer.cpp" />
   </ItemGroup>
 </Project>

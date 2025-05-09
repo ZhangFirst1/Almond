@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "entt.hpp"
+#include "Almond/Core/Log.h"
 
 namespace Almond {
 
@@ -15,8 +16,10 @@ namespace Almond {
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args) {
 			AM_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
-
-			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+			// 添加组件到实体时执行特定的初始化逻辑
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
 		}
 
 		// 获取Component
@@ -41,6 +44,16 @@ namespace Almond {
 		}
 
 		operator bool() const { return m_EntityHandle != entt::null; }
+		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+		operator entt::entity() const { return m_EntityHandle; }
+
+		bool operator ==(const Entity& other) const {
+			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+		}
+
+		bool operator !=(const Entity& other) const {
+			return !(*this == other);
+		}
 	private:
 		entt::entity m_EntityHandle = entt::null;
 		Scene* m_Scene = nullptr;
