@@ -16,20 +16,20 @@ namespace Almond {
 	{
 		AM_PROFILE_FUNCTION();
 
-		if (Input::IsKeypressed(AM_KEY_A))
+		if (Input::IsKeypressed(Key::A))
 			m_CameraPosition.x -= m_CameraTranslateSpeed * ts;
-		else if (Input::IsKeypressed(AM_KEY_D))
+		else if (Input::IsKeypressed(Key::D))
 			m_CameraPosition.x += m_CameraTranslateSpeed * ts;
 
-		if (Input::IsKeypressed(AM_KEY_S))
+		if (Input::IsKeypressed(Key::S))
 			m_CameraPosition.y -= m_CameraTranslateSpeed * ts;
-		else if (Input::IsKeypressed(AM_KEY_W))
+		else if (Input::IsKeypressed(Key::W))
 			m_CameraPosition.y += m_CameraTranslateSpeed * ts;
 
 		if (m_Rotation) {
-			if (Almond::Input::IsKeypressed(AM_KEY_Q))
+			if (Almond::Input::IsKeypressed(Key::Q))
 				m_CameraRotation -= m_CameraRotationSpeed * ts;
-			else if (Almond::Input::IsKeypressed(AM_KEY_E))
+			else if (Almond::Input::IsKeypressed(Key::E))
 				m_CameraRotation += m_CameraRotationSpeed * ts;
 			m_Camera.SetRotation(m_CameraRotation);
 		}

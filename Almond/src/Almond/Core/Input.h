@@ -2,6 +2,8 @@
 // 轮询，用以获取输入状态
 
 #include "Almond/Core/Core.h"
+#include "Almond/Core/KeyCodes.h"
+#include "Almond/Core/MouseButtonCodes.h"
 
 namespace Almond {
 	class ALMOND_API Input {

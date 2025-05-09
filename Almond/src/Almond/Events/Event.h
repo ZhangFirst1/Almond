@@ -66,14 +66,23 @@ namespace Almond {
 		EventDispatcher(Event& event)
 			:m_Event(event) {}
 
-		template<typename T>										// 写两个T是为了区分共有和私有
-		bool Dispatch(EventFn<T> func) {							// 接收一个“参数为T”且“返回值为bool”的函数func（使用函数指针）
+		template<typename T, typename F>										// 写两个T是为了区分共有和私有
+		bool Dispatch(const F& func) {							// 接收一个“参数为T”且“返回值为bool”的函数func（使用函数指针）
 			if (m_Event.GetEventType() == T::GetStaticType()) {		// T::即通过类名调用获取静态类型的函数，如果当前事件（创建Dispatcher时使用的事件）与接收的函数指针所对应的事件相同
-				m_Event.Handled = func(static_cast<T&>(m_Event) );	// 将m_Event转为T&，执行事件
+				m_Event.Handled |= func(static_cast<T&>(m_Event));	// 将m_Event转为T&，执行事件
 				return true;										// 事件类型匹配且已经被处理，返回true
 			}
 			return false;											// 事件类型不匹配，返回false
 		}
+
+		//template<typename T>										// 写两个T是为了区分共有和私有
+		//bool Dispatch(EventFn<T> func) {							// 接收一个“参数为T”且“返回值为bool”的函数func（使用函数指针）
+		//	if (m_Event.GetEventType() == T::GetStaticType()) {		// T::即通过类名调用获取静态类型的函数，如果当前事件（创建Dispatcher时使用的事件）与接收的函数指针所对应的事件相同
+		//		m_Event.Handled = func(static_cast<T&>(m_Event));	// 将m_Event转为T&，执行事件
+		//		return true;										// 事件类型匹配且已经被处理，返回true
+		//	}
+		//	return false;											// 事件类型不匹配，返回false
+		//}
 
 	private:
 		Event& m_Event;

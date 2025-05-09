@@ -19,7 +19,7 @@ namespace Almond {
 		bool Deserialize(const std::string& filepath);
 		bool DeserializeRuntime(const std::string& filepath);
 	private:
-		Ref<Scene> m_Scene;
+		Ref<Scene> m_Scene;		// 接收一个场景，用于在场景中添加Entity以绘制到场景中
 	};
 
 

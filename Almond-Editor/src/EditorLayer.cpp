@@ -3,6 +3,7 @@
 #include "imgui/imgui.h"
 #include "Almond/Renderer/Renderer2D.h"
 #include "Almond/Scene/SceneSerializer.h"
+#include "Almond/Utils/PlatformUtils.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -74,8 +75,7 @@ namespace Almond {
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
 #endif
-		m_SceneHierarchyPanel.SetContext(m_ActiveScene);	
-		
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);	// 为SceneHierarchyPanel设置场景
 	}
 
 	void EditorLayer::OnDetach() {
@@ -136,8 +136,6 @@ namespace Almond {
 		float minWinSizeX = style.WindowMinSize.x;
 		style.WindowMinSize.x = 370.0f;
 
-
-
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
@@ -150,20 +148,19 @@ namespace Almond {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				// 序列化
-				if (ImGui::MenuItem("Serialize")) {
-					SceneSerializer serializer(m_ActiveScene);
-					serializer.Serialize("assets/scene/Example.almond");
-				}
+				// 新建一个场景
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+					NewScene();
 
-				// 反序列化
-				if (ImGui::MenuItem("Deserialize")) {
-					SceneSerializer serializer(m_ActiveScene);
-					serializer.Deserialize("assets/scene/Example.almond");
-				} 
+				// 打开文件（反序列化）
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+					OpenScene();
+
+				// 另存为（序列化）
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+					SaveSceneAs();
 
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
-
 				ImGui::EndMenu();
 			}
 
@@ -194,7 +191,7 @@ namespace Almond {
 		m_ViewportSize = { viewportPaneSize.x, viewportPaneSize.y };
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{1, 0});
+		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();
 		ImGui::PopStyleVar();
 
@@ -217,7 +214,7 @@ namespace Almond {
 
 		// Update
 		// 只有悬停在视口才会更新摄像机
-		if(m_ViewportFocusd)
+		if (m_ViewportFocusd)
 			m_CameraController.OnUpdate(ts);
 
 		// Render
@@ -233,7 +230,7 @@ namespace Almond {
 
 		// Update Scene
 		m_ActiveScene->OnUpdate(ts);
-		
+
 		// Renderer2D::EndScene();
 
 		// 解绑帧缓冲区
@@ -243,6 +240,72 @@ namespace Almond {
 	void EditorLayer::OnEvent(Event& e)
 	{
 		m_CameraController.OnEvent(e);
+
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<KeyPressedEvent>(AM_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e) {
+		// 快捷键
+		if (e.GetRepeatcount() > 0)
+			return false;
+
+		bool control = Input::IsKeypressed(Key::LeftControl) || Input::IsKeypressed(Key::RightControl);
+		bool shift = Input::IsKeypressed(Key::LeftShift) || Input::IsKeypressed(Key::RightShift);
+
+		switch (e.GetKeyCode())
+		{
+		case Key::N:
+		{
+			if (control)
+				NewScene();
+
+			break;
+		}
+		case Key::O:
+		{
+			if (control)
+				OpenScene();
+
+			break;
+		}
+		case Key::S:
+		{
+			if (control && shift)
+				SaveSceneAs();
+
+			break;
+		}
+		}
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();					// 打开新场景时，新建一个场景
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);	// SceneHierarchyPanel设置场景
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filepath = FileDialogs::OpenFile("Almond Scene (*.almond)\0*.almond\0");
+		if (!filepath.empty()) {
+			m_ActiveScene = CreateRef<Scene>();					// 打开新场景时，新建一个场景
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_ActiveScene);	// SceneHierarchyPanel设置场景
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(filepath);
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filepath = FileDialogs::SaveFile("Almond Scene (*.almond)\0*.almond\0");
+		if (!filepath.empty()) {
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(filepath);
+		}
 	}
 
 }
