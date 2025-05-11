@@ -2,6 +2,7 @@
 // 鼠标事件
 
 #include "Event.h"
+#include <sstream>
 
 namespace Almond {
 	// 鼠标移动---------------------------------------------------

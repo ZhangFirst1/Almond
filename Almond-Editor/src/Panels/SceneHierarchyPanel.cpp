@@ -1,10 +1,12 @@
 #include "Almond/Scene/Components.h"
 #include "SceneHierarchyPanel.h"
 
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include <glm/gtc/type_ptr.hpp>
+
 
 /* TODO: 为一个Entity重复添加Component会报错，需要阻止这种行为 */
 
@@ -22,41 +24,45 @@ namespace Almond {
 	void SceneHierarchyPanel::OnImGuiRender() {
 		ImGui::Begin("Scene Hierarchy");
 
-		m_Context->m_Registry.view<entt::entity>().each([this](auto entityID) {
-			Entity entity{entityID, m_Context.get() };	// 此处使用get获取原始指针
-			DrawEntityNode(entity);
-		});
-		// 当按下左键且鼠标在SceneHierarchyPanel, 将选择的目标置空
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			m_SelectionContext = {};
+		if(m_Context){
+			m_Context->m_Registry.view<entt::entity>().each([&](auto entityID) {
+				Entity entity{ entityID, m_Context.get() };	// 此处使用get获取原始指针
+				DrawEntityNode(entity);
+				});
+			// 当按下左键且鼠标在SceneHierarchyPanel, 将选择的目标置空
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_SelectionContext = {};
 
-		// 空白处右键，不会在内部的项上弹出
-		if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
-			if (ImGui::MenuItem("Create Empty Entity"))
-				m_Context->CreateEntity("Empty Entity");
+			// 空白处右键，不会在内部的项上弹出
+			if (ImGui::BeginPopupContextWindow(0, 1 | ImGuiPopupFlags_NoOpenOverItems)) {
+				if (ImGui::MenuItem("Create Empty Entity"))
+					m_Context->CreateEntity("Empty Entity");
 
-			ImGui::EndPopup();
+				ImGui::EndPopup();
+			}
 		}
-
 		ImGui::End();
 
 		ImGui::Begin("Properties");
 		if (m_SelectionContext) {
 			DrawComponents(m_SelectionContext);
-
 		}
 		ImGui::End();
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	{
+		m_SelectionContext = entity;
+	}
+
+	void SceneHierarchyPanel::DrawEntityNode(Entity& entity)
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;;
 
 		// TreeNodeEx(树节点ID，树节点标志用于控制节点行为，树节点标签) 返回值为该节点是否被展开
-		bool opened = ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
 		// 判断当前entity是否被点击
 		if (ImGui::IsItemClicked()) {
 			m_SelectionContext = entity;
@@ -73,7 +79,7 @@ namespace Almond {
 		if (opened) {
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
 			// TODO: Delete
-			bool opened = ImGui::TreeNodeEx((void*)3424234, flags, tag.c_str());
+			bool opened = ImGui::TreeNodeEx((void*)66666, flags, tag.c_str());
 			if (opened) {
 				ImGui::TreePop();
 			}
@@ -82,10 +88,10 @@ namespace Almond {
 
 		// 删除entity
 		if (entityDelete) {
+			m_Context->DestroyEntity(entity);
 			// 删除的是当前选中的entity，则需要将其置空
 			if (m_SelectionContext == entity)
 				m_SelectionContext = {};
-			m_Context->DestroyEntity(entity);
 		}
 	}
 
@@ -196,7 +202,7 @@ namespace Almond {
 
 	// T为Component类型，UIFunction为可调用对象（如lambda），用于绘制component的UI
 	template<typename T, typename UIFunction>
-	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
+	static void DrawComponent(const std::string& name, Entity& entity, UIFunction uiFunction)
 	{
 		// 设置默认样式，默认打开、有边框、适应可用宽度、允许重叠使用内边距
 		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
@@ -241,7 +247,7 @@ namespace Almond {
 		}
 	}
 
-	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	void SceneHierarchyPanel::DrawComponents(Entity& entity)
 	{
 		if (entity.HasComponent<TagComponent>()) {
 			auto& tag = entity.GetComponent<TagComponent>().Tag;

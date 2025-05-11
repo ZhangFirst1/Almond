@@ -4,6 +4,8 @@
 #include "Texture.h"
 #include "SubTexture2D.h"
 #include "Camera.h"
+#include "EditorCamera.h"
+#include "Almond/Scene/Components.h"
 
 namespace Almond {
 	
@@ -14,7 +16,10 @@ namespace Almond {
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const OrthographicCamera& camera);		// TODO: remove
+		static void BeginScene(const EditorCamera& camera);		// TODO: remove
 		static void EndScene();
+
+		static void StartBatch();
 
 		static void Flush();
 
@@ -28,8 +33,8 @@ namespace Almond {
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 		// 基于transform变换绘制
-		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
-		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
+		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f), int entityID = -1);
 
 		// 旋转是弧度
 		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
@@ -39,6 +44,9 @@ namespace Almond {
 		static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, const float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 		static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, const float tilingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 		
+		// 
+		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
+
 		// 统计信息
 		struct Statistics {
 			uint32_t DrawCall = 0;

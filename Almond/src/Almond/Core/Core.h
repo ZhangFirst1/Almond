@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#define AM_PLATFORM_WINDOWS 1
+
 #ifdef AM_PLATFORM_WINDOWS
 #ifdef AM_DYNAMIC_LINK
 	#ifdef AM_BUILD_DLL

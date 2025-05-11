@@ -4,63 +4,211 @@
 #include <glad/glad.h>
 
 namespace Almond {
+	// 最大帧缓冲尺寸（避免创建过大的帧缓冲导致崩溃）
+	static const uint32_t s_MaxFramebufferSize = 8192;
 
+	namespace Utils {
+
+		// 根据是否多重采样返回正确的纹理目标类型
+		static GLenum TextureTarget(bool multisampled)
+		{
+			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+		}
+
+		// 创建一个或多个纹理对象，存储到outID中
+		static void CreateTextures(bool multisampled, uint32_t* outID, uint32_t count)
+		{
+			glCreateTextures(TextureTarget(multisampled), count, outID);
+		}
+
+		// 绑定纹理对象到当前上下文
+		static void BindTexture(bool multisampled, uint32_t id)
+		{
+			glBindTexture(TextureTarget(multisampled), id);
+		}
+
+		// 附加颜色纹理到帧缓冲
+		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
+		{
+			bool multisampled = samples > 1;
+			if (multisampled)
+			{
+				// 创建多重采样颜色纹理存储
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
+			}
+			else
+			{
+				// 创建普通纹理存储并设置参数
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), id, 0);
+		}
+
+		// 附加深度纹理到帧缓冲
+		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
+		{
+			bool multisampled = samples > 1;
+			if (multisampled)
+			{
+				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+			}
+			else
+			{
+				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
+		}
+
+		// 判断当前纹理格式是否为深度格式
+		static bool IsDepthFormat(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFormat::DEPTH24STENCIL8:  return true;
+			}
+
+			return false;
+		}
+
+		// 转换Format类型到OpenGL
+		static GLenum HazelFBTextureFormatToGL(FramebufferTextureFormat format)
+		{
+			switch (format)
+			{
+			case FramebufferTextureFormat::RGBA8:       return GL_RGBA8;
+			case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
+			}
+
+			AM_CORE_ASSERT(false, "Unknow Attachment Texture Type");
+			return 0;
+		}
+	}
+
+	// 帧缓冲构造函数
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
-		: m_Specification(spec){
+		: m_Specification(spec)
+	{
+		// 遍历所有附件格式，分别放入颜色附件或深度附件中
+		for (auto spec : m_Specification.Attachments.Attachments)
+		{
+			if (!Utils::IsDepthFormat(spec.TextureFormat))
+				m_ColorAttachmentSpecifications.emplace_back(spec);
+			else
+				m_DepthAttachmentSpecification = spec;
+		}
+
+		// 创建OpenGL实际资源
 		Invalidate();
 	}
 
 	OpenGLFramebuffer::~OpenGLFramebuffer() {
 		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
+	// 重新创建帧缓冲资源（如在构造或尺寸变化时）
 	void OpenGLFramebuffer::Invalidate()
 	{
+		// 如果已经创建，先清除原来的帧缓冲资源
 		if (m_RendererID) {
 			glDeleteFramebuffers(1, &m_RendererID);
-			glDeleteTextures(1, &m_ColorAttachment);
+			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
 			glDeleteTextures(1, &m_DepthAttachment);
+
+			m_ColorAttachments.clear();
+			m_DepthAttachment = 0;
 		}
 
-		// 创建并绑定帧缓冲
+		// 创建帧缓冲对象并绑定
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-		// 创建一个2D纹理，用于颜色附件
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
+		bool multisample = m_Specification.Samples > 1;		// 判读是否为多重采样
 
-		// 为纹理分配存储空间（不初始化数据）
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		// Attachments
+		
+		// ---------------------
+		// 颜色附件处理
+		// ---------------------
+		if (m_ColorAttachmentSpecifications.size())
+		{
+			// 为每个颜色附件创建纹理
+			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+			// 参数：是否为多重采样、ID、Count
+			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
 
-		// 设置纹理缩小/放大方式为线性插值
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
+			{
+				Utils::BindTexture(multisample, m_ColorAttachments[i]);
 
-		// 将创建的颜色纹理附加到当前绑定的帧缓冲对象的颜色附件0
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachment, 0);
+				// 根据格式附加纹理
+				switch (m_ColorAttachmentSpecifications[i].TextureFormat)
+				{
+				case FramebufferTextureFormat::RGBA8:
+					// uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+					break;
+				case FramebufferTextureFormat::RED_INTEGER:
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
+					break;
+				}
+			}
+		}
 
-		// 创建一个用于深度和模板缓冲的纹理（Depth-Stencil Attachment）
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
-		glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-		// 为深度/模板纹理分配存储空间（使用不可变格式），格式为 24 位深度 + 8 位模板
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
-		// 将这个深度/模板纹理附加到帧缓冲对象的相应附件
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
+		// ---------------------
+		// 深度附件处理
+		// ---------------------
+		if (m_DepthAttachmentSpecification.TextureFormat != FramebufferTextureFormat::None)
+		{
+			Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
+			Utils::BindTexture(multisample, m_DepthAttachment);
+			switch (m_DepthAttachmentSpecification.TextureFormat)
+			{
+			case FramebufferTextureFormat::DEPTH24STENCIL8:
+				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+				break;
+			}
+		}
 
-		// 检查帧缓冲状态是否完整（即是否正确设置了所有需要的附件）
-		AM_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framerbuffer is incomplete");
+		// 设置绘制缓冲区（多颜色）
+		if (m_ColorAttachments.size() > 1)
+		{
+			AM_CORE_ASSERT(m_ColorAttachments.size() <= 4, "Frambuffer have to less and equal than four!");
+			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+			glDrawBuffers(m_ColorAttachments.size(), buffers);
+		}
+		else if (m_ColorAttachments.empty())
+		{
+			// 仅深度通道，无颜色输出
+			glDrawBuffer(GL_NONE);
+		}
+
+		AM_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
 		// 解绑当前帧缓冲对象，恢复为默认帧缓冲（通常是窗口系统的帧缓冲）
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	// 绑定、解绑当前帧缓冲
 	void OpenGLFramebuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+		glViewport(0, 0, m_Specification.Width, m_Specification.Height);	// 设置视口
 	}
 
 	void OpenGLFramebuffer::UnBind()
@@ -68,12 +216,33 @@ namespace Almond {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	// 改变帧缓冲大小时需要重建帧缓冲
 	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
 	{
 		m_Specification.Width = width;
 		m_Specification.Height = height;
 
 		Invalidate();
+	}
+
+	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	{
+		AM_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "attachmentIndex have to less than all attachmentIndex num");
+
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+		int pixelData;
+		// 位置(x, y), 像素大小(width, height), 内部类型，数据类型，读取值
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+		return pixelData;
+	}
+
+	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{
+		AM_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "attachmentIndex have to less than all attachmentIndex num");
+
+		auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
+			Utils::HazelFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
 	}
 
 }

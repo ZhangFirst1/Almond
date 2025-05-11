@@ -21,6 +21,7 @@ namespace Almond {
 		static VertexArray* Create();
 	private:
 		uint32_t m_RendererID;
+		uint32_t m_VertexBufferIndex = 0;
 
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;		// 添加到VAO的所有VBO的指针
 		Ref<IndexBuffer> m_IndexBuffer;						// 添加到VAO的EBO的指针

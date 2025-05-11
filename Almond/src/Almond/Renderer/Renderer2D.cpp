@@ -14,9 +14,11 @@ namespace Almond {
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TexCoord;
-
 		float TexIndex;			// 纹理下标
 		float TilingFactor;		// 平铺因子
+
+		// Editor only
+		int EntityID;
 	};
 
 	// 2D渲染器直接把顶点、着色器、纹理作为静态成员存储在渲染器中
@@ -61,7 +63,8 @@ namespace Almond {
 			{ ShaderDataType::Float4, "a_Color"},
 			{ ShaderDataType::Float2, "a_TexCoord"},
 			{ ShaderDataType::Float, "a_TexIndex"},
-			{ ShaderDataType::Float, "a_TilingFactor"}
+			{ ShaderDataType::Float, "a_TilingFactor"},
+			{ ShaderDataType::Int, "a_EntityID"}
 		};
 		s_Data.QuadVertexBuffer->SetLayout(squareLayout);
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
@@ -125,10 +128,7 @@ namespace Almond {
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+		StartBatch();
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
@@ -139,10 +139,19 @@ namespace Almond {
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-		s_Data.QuadIndexCount = 0;	
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		StartBatch();
+	}
 
-		s_Data.TextureSlotIndex = 1;
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		AM_PROFILE_FUNCTION();
+		glm::mat4 viewProj = camera.GetViewProjection();
+
+		// Upload只是单纯的上传数据到GPU，set表示可能有其他操作，更高级
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
@@ -155,6 +164,14 @@ namespace Almond {
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		Flush();
+	}
+
+	void Renderer2D::StartBatch()
+	{
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1;
 	}
 
 	void Renderer2D::FlushAndReset() {
@@ -256,9 +273,10 @@ namespace Almond {
 		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
 		AM_PROFILE_FUNCTION();
+		// std::cout << "DrawQuad 的" << entityID << std::endl;
 
 		// 如果绘制顶点数量大于单次批渲染限制的最大数量，开启新的批渲染
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -275,6 +293,7 @@ namespace Almond {
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = texIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 
@@ -282,7 +301,7 @@ namespace Almond {
 		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const float tilingFactor, const glm::vec4& tintColor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const float tilingFactor, const glm::vec4& tintColor, int entityID)
 	{
 		AM_PROFILE_FUNCTION();
 
@@ -317,6 +336,7 @@ namespace Almond {
 			s_Data.QuadVertexBufferPtr->TexCoord = textureCoords[i];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+			s_Data.QuadVertexBufferPtr->EntityID = entityID;
 			s_Data.QuadVertexBufferPtr++;
 		}
 
@@ -413,6 +433,11 @@ namespace Almond {
 
 		s_Data.QuadIndexCount += 6;		// 绘制了一个长方形，即6个顶点
 		s_Data.Stats.QuadCount++;		// 绘制了一个长方形，统计+1
+	}
+
+	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+	{
+		DrawQuad(transform, src.Color, entityID);
 	}
 
 	void Renderer2D::ResetStats() {		// 重置统计状态

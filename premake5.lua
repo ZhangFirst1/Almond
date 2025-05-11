@@ -18,6 +18,7 @@ IncludeDir["glm"] = "Almond/vendor/glm"
 IncludeDir["entt"] = "Almond/vendor/entt/include"
 IncludeDir["stb_image"] = "Almond/vendor/stb_image"
 IncludeDir["yaml_cpp"] = "Almond/vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "Almond/vendor/ImGuizmo"
 
 include "Almond/vendor/GLFW"
 include "Almond/vendor/Glad"
@@ -47,7 +48,10 @@ project "Almond"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
 		"%{prj.name}/vendor/stb_image/**.h",
-		"%{prj.name}/vendor/stb_image/**.cpp"
+		"%{prj.name}/vendor/stb_image/**.cpp",
+
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
 	}
 
 	defines{
@@ -64,7 +68,8 @@ project "Almond"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links{
@@ -74,6 +79,9 @@ project "Almond"
 		"ImGui",
 		"yaml-cpp"
 	}
+
+	filter "files:Almond/vendor/ImGuizmo/**.cpp"
+	flags { "NoPCH" }
 
 	filter "system:windows"
 		systemversion "latest"
@@ -182,7 +190,8 @@ project "Almond-Editor"
 		"$(SolutionDir)Almond/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links{

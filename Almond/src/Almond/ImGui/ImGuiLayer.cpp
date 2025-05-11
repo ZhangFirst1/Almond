@@ -9,6 +9,7 @@
 #include "Almond/Core/Application.h"
 
 #include <GLFW/glfw3.h>
+#include <ImGuizmo.h>
  
 namespace Almond {
 
@@ -83,6 +84,7 @@ namespace Almond {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End() {

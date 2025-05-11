@@ -6,6 +6,7 @@
 #include "Almond/Renderer/Renderer2D.h"
 
 #include <glm/glm.hpp>
+#include <glad/glad.h>
 
 namespace Almond {
 
@@ -24,16 +25,40 @@ namespace Almond {
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = name.empty() ? "Entity" : name;
+		AM_CORE_WARN("Create Entity {0} : {1}", (int)entity.m_EntityHandle, name);
 		return entity;
 	}
 
-	void Scene::DestroyEntity(Entity entity)
+	void Scene::DestroyEntity(Entity& entity)
 	{
+		// DEBUG
+		AM_CORE_WARN("Destroy Entity {0}", (int)entity.m_EntityHandle, entity.GetComponent<TagComponent>().Tag.c_str());
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera) {
+		Renderer2D::BeginScene(camera);
+
+		// group<A>(entt::get<B>)	以 A 为主组件，A 和 B 紧凑排列，其中B只读，不参与排序
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group) {
+			// 从 group 中提取这个 entity 的 TransformComponent 和 SpriteRendererComponent 引用。
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			// Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+		}
+
+		Renderer2D::EndScene();
+	}
+
+	void Scene::OnUpdateRuntime(Timestep ts)
 	{
+		// Debug
+		//auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		//std::cout << "Group size: " << group.size() << "\n";
+
+
 		// Update scripts
 		{
 			// .each()用于对每个匹配的实体调用lambda
@@ -51,6 +76,7 @@ namespace Almond {
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
+			
 			auto view = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : view) {
 				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
@@ -62,17 +88,23 @@ namespace Almond {
 				}
 			}
 		}
+
 		// 存在主相机
 		if (mainCamera) {
-			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
+			// Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);
+
+			std::cout << "mainCamera" << std::endl;
 
 			// group<A>(entt::get<B>)	以 A 为主组件，A 和 B 紧凑排列，其中B只读，不参与排序
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group) {
 				// 从 group 中提取这个 entity 的 TransformComponent 和 SpriteRendererComponent 引用。
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				// Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+
+				
 			}
 
 			Renderer2D::EndScene();
@@ -91,6 +123,17 @@ namespace Almond {
 				cameraComponent.Camera.SetViewportSize(width, height);
 			}
 		}
+	}
+
+	Almond::Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view) {
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.Primary)
+				return Entity{ entity, this };
+		}
+		return {};
 	}
 
 	// 模板特偏化
